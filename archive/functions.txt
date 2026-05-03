@@ -1,0 +1,34 @@
+Removed from preprocess.py after individual tests were created.
+# Development test harness for validating preprocessing stages.
+# Keep while building the module. Later this can be replaced by
+# formal tests and moved into a dedicated test runner.
+if __name__ == "__main__":
+    
+    def run_test():
+        df = load_data("data/processed/aircraft_cleaned.csv")
+        df = select_columns(df, REQUIRED_COLUMNS)
+        df = clean_numeric_data(df)
+        df = clean_missing_rows(df)
+        df = engineer_features(df)
+
+        print(df[[""
+            "Number",
+            "NumberBuilt",
+            "Length",
+            "Wingspan",
+            "AspectRatio",
+            "SizeIndex",
+            "NumberBuilt_log"
+        ]].head())
+
+        print(df.isna().sum())
+        print(f"Row count after cleanup: {len(df)}")
+
+    output = capture_output(run_test)
+
+    print(output)
+
+    log_test_output(
+        command="python -m src.preprocess",
+        output=output
+    )
