@@ -18,7 +18,8 @@ build/
 .ipynb_checkpoints/
 
 # Model artifacts
-models/model.pkl
+Models/
+models/
 
 # Test log
 tests/data/test_data.txt

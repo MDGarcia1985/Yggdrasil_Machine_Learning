@@ -1,175 +1,174 @@
 """
-This module trains and evaluates a machine learning model
-using the feature matrix and target labels prepared upstream.
+train.py
 
-It assumes:
-- preprocess.py has cleaned and enriched the dataset
-- features.py has produced X (features) and y (labels)
+Purpose:
+Train the baseline classifier for the Yggdrasil circuit dataset.
 
-Steps used:
-- Split data into training and test sets
-- Scale feature values
-- Train classification model
-- Evaluate model performance
+Pipeline:
+- load preprocessed circuit dataframe
+- build feature matrix
+- get target labels
+- split train/test
+- train RandomForestClassifier
+- evaluate model
+- report feature importance
+- save model + encoder + feature columns
 
-Written by: Michael Garcia
-Date: 03/23/2026
-For: CSC373
-License: MIT
+Primary MVP target:
+- next_component_type
 """
 
 from __future__ import annotations
 
-import pandas as pd
-import joblib
-import os
-from typing import Tuple
+from pathlib import Path
+from typing import Dict, Any
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
+import joblib
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
+from src.preprocess import load_preprocessed_dataframe, split_data
+from src.features import build_feature_matrix, get_target_labels
+from src.feature_importance import get_model_importance, print_top_importance
 
-def split_data(
-    X: pd.DataFrame,
-    y: pd.Series,
-    test_size: float = 0.2, # 20% of data reserved for testinge:
-    random_state: int = 42, # for reproducibility
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+
+MODEL_DIR = Path("Models")
+MODEL_PATH = MODEL_DIR / "model.pkl"
+ENCODER_PATH = MODEL_DIR / "encoder.pkl"
+FEATURE_COLUMNS_PATH = MODEL_DIR / "feature_columns.pkl"
+TRAINING_REPORT_PATH = MODEL_DIR / "training_report.pkl"
+
+DEFAULT_DATA_PATH = Path("Data/raw/circuits_sample.csv")
+
+
+def train_model(
+    csv_path: str | Path = DEFAULT_DATA_PATH,
+    test_size: float = 0.2,
+    random_state: int = 42,
+    n_estimators: int = 200,
+) -> Dict[str, Any]:
     """
-    Split feature matrix and labels into training and test sets.
-
-    Why:
-    The model must be evaluated on unseen data to estimate
-    how well it generalizes.
+    Train a RandomForest model on the circuit dataset.
 
     Args:
-        X: Feature matrix
-        y: Target labels
-        test_size: Fraction of data reserved for testing
-        random_state: Seed for reproducibility
+        csv_path:
+            Path to the raw circuit CSV.
+        test_size:
+            Fraction of data reserved for test set.
+        random_state:
+            Reproducibility seed.
+        n_estimators:
+            Number of trees in the forest.
 
     Returns:
-        X_train, X_test, y_train, y_test
+        Dictionary containing trained artifacts and evaluation results.
     """
-    return train_test_split(
-        X,
+    df = load_preprocessed_dataframe(csv_path)
+
+    X_encoded, encoder = build_feature_matrix(df, fit_encoder=True)
+    y = get_target_labels(df)
+
+    X_train, X_test, y_train, y_test = split_data(
+        X_encoded,
         y,
         test_size=test_size,
         random_state=random_state,
-        stratify=y,
     )
 
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        random_state=random_state,
+        n_jobs=-1,
+        class_weight="balanced_subsample",
+    )
 
-def scale_features(
-    X_train: pd.DataFrame,
-    X_test: pd.DataFrame,
-) -> Tuple[pd.DataFrame, pd.DataFrame, StandardScaler]:
-    """
-    Scale training and test features using StandardScaler.
-
-    Why:
-    Standardization places features on a comparable scale,
-    which helps many models train more effectively.
-
-    Important:
-    The scaler is fit only on training data, then applied
-    to both training and test data to avoid leakage.
-
-    Args:
-        X_train: Training feature matrix
-        X_test: Test feature matrix
-
-    Returns:
-        X_train_scaled, X_test_scaled, scaler
-    """
-    scaler = StandardScaler()
-
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-
-    return X_train_scaled, X_test_scaled, scaler
-
-
-def train_model(X_train, y_train) -> LogisticRegression:
-    """
-    Train a logistic regression classifier.
-
-    Why:
-    Logistic regression is simple, interpretable, and
-    appropriate for a first-pass structured classification model.
-
-    Args:
-        X_train: Scaled training feature matrix
-        y_train: Training target labels
-
-    Returns:
-        Trained LogisticRegression model
-    """
-    model = LogisticRegression(max_iter=1000)
     model.fit(X_train, y_train)
-    return model
 
+    predictions = model.predict(X_test)
+    accuracy = accuracy_score(y_test, predictions)
 
-def evaluate_model(model, X_test, y_test) -> dict:
-    """
-    Evaluate the trained model on the test set.
+    report_text = classification_report(
+        y_test,
+        predictions,
+        zero_division=0,
+    )
 
-    Args:
-        model: Trained classifier
-        X_test: Scaled test feature matrix
-        y_test: Test target labels
+    matrix = confusion_matrix(y_test, predictions)
 
-    Returns:
-        Dictionary containing evaluation results
-    """
-    y_pred = model.predict(X_test)
+    importance = get_model_importance(
+        features=X_train.columns,
+        model=model,
+        X_test=X_test,
+        y_test=y_test,
+    )
 
-    results = {
-        "accuracy": accuracy_score(y_test, y_pred),
-        "classification_report": classification_report(y_test, y_pred),
-        "confusion_matrix": confusion_matrix(y_test, y_pred),
-    }
+    print("Training complete")
+    print(f"Accuracy: {accuracy:.4f}")
+    print("\nClassification Report:")
+    print(report_text)
 
-    return results
+    print_top_importance(importance, top_n=15)
 
-def save_model(model, scaler, feature_columns, path: str = "models/model.pkl") -> None:
-    """
-    Save trained model, scaler, and feature metadata to disk.
-
-    Why:
-    The model alone is not sufficient for predictions. We must also
-    preserve the scaler and the exact feature ordering used during training.
-
-    Args:
-        model: Trained model
-        scaler: Fitted scaler
-        feature_columns: List of feature column names
-        path: Output file path
-    """
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-
-    payload = {
+    return {
         "model": model,
-        "scaler": scaler,
-        "feature_columns": feature_columns,
+        "encoder": encoder,
+        "feature_columns": list(X_encoded.columns),
+        "X_test": X_test,
+        "y_test": y_test,
+        "predictions": predictions,
+        "accuracy": accuracy,
+        "classification_report": report_text,
+        "confusion_matrix": matrix,
+        "feature_importance": importance,
     }
 
-    joblib.dump(payload, path)
 
-
-def load_model(path: str = "models/model.pkl"):
+def save_artifacts(training_result: Dict[str, Any]) -> None:
     """
-    Load trained model artifacts from disk.
-
-    Args:
-        path: Path to saved model artifact
-
-    Returns:
-        Dictionary containing:
-        - model
-        - scaler
-        - feature_columns
+    Save trained model artifacts to disk.
     """
-    return joblib.load(path)
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+
+    joblib.dump(training_result["model"], MODEL_PATH)
+    joblib.dump(training_result["encoder"], ENCODER_PATH)
+    joblib.dump(training_result["feature_columns"], FEATURE_COLUMNS_PATH)
+
+    report_payload = {
+        "accuracy": training_result["accuracy"],
+        "classification_report": training_result["classification_report"],
+        "confusion_matrix": training_result["confusion_matrix"],
+        "feature_importance": training_result["feature_importance"],
+    }
+
+    joblib.dump(report_payload, TRAINING_REPORT_PATH)
+
+    print(f"\nSaved model to: {MODEL_PATH}")
+    print(f"Saved encoder to: {ENCODER_PATH}")
+    print(f"Saved feature columns to: {FEATURE_COLUMNS_PATH}")
+    print(f"Saved training report to: {TRAINING_REPORT_PATH}")
+
+
+def load_model(
+    model_path: str | Path = MODEL_PATH,
+    encoder_path: str | Path = ENCODER_PATH,
+    feature_columns_path: str | Path = FEATURE_COLUMNS_PATH,
+) -> Dict[str, Any]:
+    """
+    Load saved training artifacts.
+
+    This supports predict.py and UI prediction workflows.
+    """
+    return {
+        "model": joblib.load(model_path),
+        "encoder": joblib.load(encoder_path),
+        "feature_columns": joblib.load(feature_columns_path),
+    }
+
+
+def main() -> None:
+    training_result = train_model()
+    save_artifacts(training_result)
+
+
+if __name__ == "__main__":
+    main()
