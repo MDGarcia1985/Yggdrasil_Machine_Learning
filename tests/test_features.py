@@ -2,64 +2,81 @@
 test_features.py
 
 Purpose:
-Run a structured test of feature selection and feature matrix creation.
+Run a structured test of feature creation for the Yggdrasil circuit dataset.
+
+Validates:
+- dataset summary
+- sample row extraction
+- encoded feature matrix creation
+- target label extraction
+- report helper functions
 """
 
-from src.preprocess import (
-    load_data,
-    select_columns,
-    clean_numeric_data,
-    clean_missing_rows,
-    engineer_features,
-    simplify_labels,
-    REQUIRED_COLUMNS,
-)
-
+from src.preprocess import load_preprocessed_dataframe
 from src.features import (
-    MODEL_FEATURES,
-    select_model_features,
     build_feature_matrix,
+    get_circuit_component_counts,
+    get_dataset_summary,
+    get_net_connection_counts,
+    get_sample_rows,
+    get_target_labels,
 )
-
 from utils.run_tests import capture_output, log_test_output
 
 
 def run_test() -> None:
     """
-    Run a feature-preparation sniff test.
+    Run feature-preparation sniff test for the circuit dataset.
     """
-    df = load_data("data/processed/aircraft_cleaned.csv")
-    df = select_columns(df, REQUIRED_COLUMNS)
-    df = clean_numeric_data(df)
-    df = clean_missing_rows(df)
-    df = engineer_features(df)
-    df = simplify_labels(df)
 
-    X, y = build_feature_matrix(df, MODEL_FEATURES, target_columns="RoleClass", drop_other=True)
+    print("Feature Preparation Sniff Test (Circuit Dataset)")
 
-    print("Feature Preparation Sniff Test")
-    print("\nSelected features:")
-    print(X.head())
+    df = load_preprocessed_dataframe()
 
-    print("\nTarget labels:")
-    print(y.head())
+    summary = get_dataset_summary(df)
+    sample_rows = get_sample_rows(df, n=5)
+    X_encoded, encoder = build_feature_matrix(df)
+    y = get_target_labels(df)
+    component_counts = get_circuit_component_counts(df)
+    net_counts = get_net_connection_counts(df)
 
-    print("\nFeature columns:")
-    print(X.columns.tolist())
+    print("\nDataset Summary:")
+    print(summary)
 
-    print("\nFeature matrix shape:")
-    print(X.shape)
+    print("\nSample Rows:")
+    for row in sample_rows:
+        print(row)
 
-    print("\nTarget vector shape:")
-    print(y.shape)
+    print("\nEncoded Feature Matrix:")
+    print(f"Shape: {X_encoded.shape}")
+    print(f"First 10 Columns: {list(X_encoded.columns[:10])}")
 
-    print("\nTarget counts:")
-    print(y.value_counts())
+    print("\nTarget Labels:")
+    print(f"Count: {len(y)}")
+    print(f"Unique Labels: {sorted(y.unique().tolist())}")
 
-    print("\nMissing values in X:")
-    print(X.isna().sum())
+    print("\nEncoder Categories:")
+    for feature_name, categories in zip(encoder.feature_names_in_, encoder.categories_):
+        print(f"{feature_name}: {list(categories)}")
 
-    print(f"\nRows after feature filtering: {len(X)}")
+    print("\nComponent Counts:")
+    print(component_counts.head(20))
+
+    print("\nNet Counts:")
+    print(net_counts.head(20))
+
+    print("\nBasic Consistency Checks:")
+    print(f"Encoded rows match dataframe rows: {len(X_encoded) == len(df)}")
+    print(f"Target rows match dataframe rows: {len(y) == len(df)}")
+    print(f"Summary row count matches dataframe: {summary['num_rows'] == len(df)}")
+    print(f"Sample rows default to 5 or less: {len(sample_rows) <= 5}")
+    print(f"Encoded feature matrix has columns: {X_encoded.shape[1] > 0}")
+
+
+def test_features_smoke() -> None:
+    output = capture_output(run_test)
+    assert "Feature Preparation Sniff Test" in output
+    assert "Encoded Feature Matrix" in output
 
 
 if __name__ == "__main__":

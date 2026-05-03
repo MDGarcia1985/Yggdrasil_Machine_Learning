@@ -1,49 +1,36 @@
-ww2-aircraft-ml/
-|
+# Repository layout
+
+```text
+Yggdrasil_Machine_Learning/
 |-- LICENSE
+|-- README.md
 |-- CONTENTS.md
-|-- main.py
+|-- requirements.txt
+|-- main.py                 # CLI -> circuit training (same as src.train)
 |
 |-- Data/
 |   |-- raw/
-|   |   |-- ww2aircraft.csv
-|   |   `-- WW2 Planes Dataset.xlsx
+|   |   |-- circuits_sample.csv   # MVP default input
+|   |   `-- (legacy ww2 samples, optional)
 |   `-- processed/
-|       |-- aircraft_cleaned.csv
-|       `-- ww2aircraft.xlsm
+|
+|-- Models/                 # Created by training (gitignored)
 |
 |-- src/
 |   |-- __init__.py
-|   |-- features.py
-|   |-- predict.py
 |   |-- preprocess.py
-|   `-- train.py
+|   |-- features.py
+|   |-- feature_importance.py
+|   |-- train.py
+|   |-- predict.py
+|   `-- db/                 # optional DB helpers
 |
 |-- tests/
-|   |-- __init__.py
-|   |-- test_features.py
-|   |-- test_predict.py
-|   |-- test_preprocess.py
-|   |-- test_train.py
-|   `-- data/
-|       `-- test_data.txt
-|
+|-- ui/                     # Streamlit
+|-- config/
+|-- docs/
 |-- scripts/
-|   `-- excel/
-|       |-- README.md
-|       `-- parse_semicolon_data.ts
-|
 |-- utils/
-|   |-- __init__.py
-|   `-- run_tests.py
-|
-|-- models/
-|   `-- model.pkl
-|
 |-- notebooks/
-|   `-- exploration.ipynb
-|
-`-- archive/
-    |-- functions.txt
-    |-- main_demo.py
-    `-- utils_sketch.py
+`-- archive/                # old experiments, not part of MVP
+```

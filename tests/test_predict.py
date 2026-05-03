@@ -2,50 +2,78 @@
 test_predict.py
 
 Purpose:
-Run a structured test of prediction using the saved model artifact.
+Run a structured test of prediction using the trained circuit model.
+
+Validates:
+- model + encoder loading
+- dataframe-based prediction
+- single-row prediction
+- accuracy + evaluation formatting
 """
 
-import numpy as np
-
-from src.predict import predict_aircraft
+from src.preprocess import load_preprocessed_dataframe
+from src.train import train_model, save_artifacts
+from src.predict import (
+    predict_dataframe,
+    predict_record,
+    evaluate_predictions,
+    model_accuracy,
+)
 from utils.run_tests import capture_output, log_test_output
 
 
 def run_test() -> None:
     """
-    Run a prediction sniff test using a hand-built sample.
+    Run prediction sniff test for the circuit dataset.
     """
 
-    sample = {
-        "Crew": 1,
-        "Length": 9.83,
-        "Wingspan": 11.28,
-        "Height": 3.71,
-        "WingArea": 21.8,
-        "MaxSpeed": 710,
-        "AspectRatio": (11.28 ** 2) / 21.8,
-        "SizeIndex": 9.83 * 11.28,
-        "NumberBuilt_log": np.log1p(15875),
-    }
+    print("Prediction Sniff Test (Circuit Dataset)")
 
-    result = predict_aircraft(sample)
+    df = load_preprocessed_dataframe()
+    trained = train_model()
+    predictions = trained["predictions"]
+    y_test_out = trained["y_test"]
+    save_artifacts(trained)
 
-    print("Prediction Sniff Test")
-    print("\nInput sample:")
-    for key, value in sample.items():
-        print(f"{key}: {value}")
+    print("\nPrediction Output Sample:")
+    print(predictions[:10])
 
-    print("\nPrediction:")
-    print(result["prediction"])
+    results = evaluate_predictions(predictions, y_test_out)
+    accuracy = model_accuracy(predictions, y_test_out)
 
-    print("\nProbabilities:")
-    print(result["probabilities"])
+    print("\nFirst 10 Evaluation Results:")
+    for r in results[:10]:
+        print(r)
 
-    print("\nConfidence:")
-    print(result["confidence"])
+    print("\nAccuracy:")
+    print(accuracy)
 
-    print("\nExpected feature columns:")
-    print(result["feature_columns"])
+    prediction_df = predict_dataframe(df.head(10))
+
+    print("\nDataFrame Prediction Sample:")
+    print(prediction_df[[
+        "component_type",
+        "predicted_next_component_type",
+        "prediction_confidence",
+    ]].head())
+
+    example_row = df.iloc[0].to_dict()
+    single_result = predict_record(example_row)
+
+    print("\nSingle Row Prediction:")
+    print(single_result)
+
+    print("\nBasic Consistency Checks:")
+    print(f"Prediction count matches test rows: {len(predictions) == len(y_test_out)}")
+    print(f"Evaluation count matches predictions: {len(results) == len(predictions)}")
+    print(f"Accuracy between 0 and 1: {0 <= accuracy <= 1}")
+    print(f"Prediction DF has results: {'predicted_next_component_type' in prediction_df.columns}")
+
+
+def test_predict_smoke() -> None:
+    output = capture_output(run_test)
+    assert "Prediction Sniff Test" in output
+    assert "predicted_next_component_type" in output
 
 
 if __name__ == "__main__":

@@ -2,65 +2,66 @@
 test_preprocess.py
 
 Purpose:
-Run a structured test of the preprocessing pipeline and log the results.
+Run a structured test of the circuit preprocessing pipeline.
 
-This test currently acts as a development-stage validation script,
-not a formal unit test suite.
+Validates:
+- CSV load
+- cleaning
+- label creation (next_component_type)
+- train/test split
 """
 
 from src.preprocess import (
-    load_data,
-    select_columns,
-    clean_numeric_data,
-    clean_missing_rows,
-    engineer_features,
-    simplify_labels,
-    REQUIRED_COLUMNS,
+    load_preprocessed_dataframe,
+    load_and_split_data,
 )
-
 from utils.run_tests import capture_output, log_test_output
 
 
 def run_test() -> None:
     """
-    Run a preprocessing pipeline sniff test.
-
-    This validates:
-    - data loading
-    - required column selection
-    - numeric cleaning
-    - missing-row cleanup
-    - engineered feature creation
-    - label simplification
+    Run preprocessing pipeline sniff test for circuit dataset.
     """
-    df = load_data("data/processed/aircraft_cleaned.csv")
-    df = select_columns(df, REQUIRED_COLUMNS)
-    df = clean_numeric_data(df)
-    df = clean_missing_rows(df)
-    df = engineer_features(df)
-    df = simplify_labels(df)
 
-    print("Preprocess Sniff Test")
-    print(df[[
-        "Name",
-        "PrimaryRole",
-        "RoleClass",
-        "NumberBuilt",
-        "AspectRatio",
-        "SizeIndex",
-        "NumberBuilt_log"
-    ]].head())
+    print("Preprocess Sniff Test (Circuit Dataset)")
 
-    print("\nMissing Values Summary:")
-    print(df.isna().sum())
+    # Load full processed dataframe
+    df = load_preprocessed_dataframe()
 
-    print(f"\nRow count after cleanup: {len(df)}")
+    print("\nDataset Summary:")
+    print(f"Rows: {len(df)}")
+    print(f"Columns: {len(df.columns)}")
+    print(f"Column Names: {list(df.columns)}")
 
-    print("\nRoleClass counts:")
-    print(df["RoleClass"].value_counts())
+    print("\nUnique Circuits:")
+    print(df["circuit_name"].unique())
 
-    print("\nRole mapping sniff test:")
-    print(df[["PrimaryRole", "RoleClass"]].head(10))
+    print("\nSample Rows:")
+    print(df.head())
+
+    # Split pipeline
+    X_train, X_test, y_train, y_test, feature_columns = load_and_split_data()
+
+    print("\nTrain/Test Split:")
+    print(f"X_train shape: {X_train.shape}")
+    print(f"X_test shape: {X_test.shape}")
+    print(f"y_train shape: {y_train.shape}")
+    print(f"y_test shape: {y_test.shape}")
+
+    print("\nFeature Columns:")
+    print(feature_columns)
+
+    print("\nBasic Consistency Checks:")
+    print(f"Training + Testing rows > 0: {len(X_train) + len(X_test) > 0}")
+    print(f"Labels match feature rows: {len(X_train) == len(y_train)}")
+    print(f"Test labels match: {len(X_test) == len(y_test)}")
+    print(f"Target column exists: {'next_component_type' in df.columns}")
+
+
+def test_preprocess_smoke() -> None:
+    output = capture_output(run_test)
+    assert "Preprocess Sniff Test" in output
+    assert "next_component_type" in output
 
 
 if __name__ == "__main__":

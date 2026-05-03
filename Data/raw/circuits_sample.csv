@@ -1,0 +1,59 @@
+circuit_name,description,ref_des,component_kind,component_type,component_value,component_value_type,pin_name,net_name
+button_debounce,RC debounce with schmitt trigger,V1,source,voltage,,,POS,NET_VIN
+button_debounce,RC debounce with schmitt trigger,V1,source,voltage,,,NEG,NET_GND
+button_debounce,RC debounce with schmitt trigger,R1,primitive,resistor,10000,ohmic,A,NET_VIN
+button_debounce,RC debounce with schmitt trigger,R1,primitive,resistor,10000,ohmic,B,NET_BUTTON_NODE
+button_debounce,RC debounce with schmitt trigger,R2,primitive,resistor,10000,ohmic,A,NET_BUTTON_NODE
+button_debounce,RC debounce with schmitt trigger,R2,primitive,resistor,10000,ohmic,B,NET_SCHMITT_IN
+button_debounce,RC debounce with schmitt trigger,D1,primitive,diode,,,ANODE,NET_VIN
+button_debounce,RC debounce with schmitt trigger,D1,primitive,diode,,,CATHODE,NET_SCHMITT_IN
+button_debounce,RC debounce with schmitt trigger,C1,primitive,capacitor,0.1,uf,A,NET_SCHMITT_IN
+button_debounce,RC debounce with schmitt trigger,C1,primitive,capacitor,0.1,uf,B,NET_GND
+button_debounce,RC debounce with schmitt trigger,SW1,primitive,switch,,,A,NET_BUTTON_NODE
+button_debounce,RC debounce with schmitt trigger,SW1,primitive,switch,,,B,NET_GND
+button_debounce,RC debounce with schmitt trigger,U1,block,schmitt_trigger,,,IN,NET_SCHMITT_IN
+button_debounce,RC debounce with schmitt trigger,U1,block,schmitt_trigger,,,OUT,NET_VOUT
+,,,,,,,,
+astable_555_timer,555 astable oscillator,V1,source,voltage,,,POS,NET_VIN
+astable_555_timer,555 astable oscillator,V1,source,voltage,,,NEG,NET_GND
+astable_555_timer,555 astable oscillator,U1,block,555_timer,,,VCC,NET_VIN
+astable_555_timer,555 astable oscillator,U1,block,555_timer,,,GND,NET_GND
+astable_555_timer,555 astable oscillator,U1,block,555_timer,,,OUT,NET_VOUT
+astable_555_timer,555 astable oscillator,U1,block,555_timer,,,DISCH,NET_DISCHARGE
+astable_555_timer,555 astable oscillator,U1,block,555_timer,,,THRESH,NET_TIMING_NODE
+astable_555_timer,555 astable oscillator,U1,block,555_timer,,,TRIG,NET_TIMING_NODE
+astable_555_timer,555 astable oscillator,R1,primitive,resistor,10000,ohmic,A,NET_VIN
+astable_555_timer,555 astable oscillator,R1,primitive,resistor,10000,ohmic,B,NET_DISCHARGE
+astable_555_timer,555 astable oscillator,R2,primitive,resistor,100000,ohmic,A,NET_DISCHARGE
+astable_555_timer,555 astable oscillator,R2,primitive,resistor,100000,ohmic,B,NET_TIMING_NODE
+astable_555_timer,555 astable oscillator,C1,primitive,capacitor,10,uf,A,NET_TIMING_NODE
+astable_555_timer,555 astable oscillator,C1,primitive,capacitor,10,uf,B,NET_GND
+,,,,,,,,
+bistable_555_timer,555 latch circuit,V1,source,voltage,,,POS,NET_VIN
+bistable_555_timer,555 latch circuit,V1,source,voltage,,,NEG,NET_GND
+bistable_555_timer,555 latch circuit,U1,block,555_timer,,,OUT,NET_VOUT
+bistable_555_timer,555 latch circuit,U1,block,555_timer,,,TRIG,NET_TRIGGER
+bistable_555_timer,555 latch circuit,U1,block,555_timer,,,RESET,NET_RESET
+bistable_555_timer,555 latch circuit,R1,primitive,resistor,10000,ohmic,A,NET_VIN
+bistable_555_timer,555 latch circuit,R1,primitive,resistor,10000,ohmic,B,NET_TRIGGER
+bistable_555_timer,555 latch circuit,R2,primitive,resistor,10000,ohmic,A,NET_VIN
+bistable_555_timer,555 latch circuit,R2,primitive,resistor,10000,ohmic,B,NET_RESET
+bistable_555_timer,555 latch circuit,SW1,primitive,switch,,,A,NET_TRIGGER
+bistable_555_timer,555 latch circuit,SW1,primitive,switch,,,B,NET_GND
+bistable_555_timer,555 latch circuit,SW2,primitive,switch,,,A,NET_RESET
+bistable_555_timer,555 latch circuit,SW2,primitive,switch,,,B,NET_GND
+,,,,,,,,
+pwm_555_timer_trim_pot,555 PWM generator,V1,source,voltage,,,POS,NET_VIN
+pwm_555_timer_trim_pot,555 PWM generator,V1,source,voltage,,,NEG,NET_GND
+pwm_555_timer_trim_pot,555 PWM generator,U1,block,555_timer,,,OUT,NET_VOUT
+pwm_555_timer_trim_pot,555 PWM generator,U1,block,555_timer,,,DISCH,NET_DISCHARGE
+pwm_555_timer_trim_pot,555 PWM generator,U1,block,555_timer,,,THRESH,NET_TIMING_NODE
+pwm_555_timer_trim_pot,555 PWM generator,RV1,primitive,potentiometer,100000,ohmic,A,NET_VIN
+pwm_555_timer_trim_pot,555 PWM generator,RV1,primitive,potentiometer,100000,ohmic,WIPER,NET_VIN
+pwm_555_timer_trim_pot,555 PWM generator,RV1,primitive,potentiometer,100000,ohmic,B,NET_DISCHARGE
+pwm_555_timer_trim_pot,555 PWM generator,R1,primitive,resistor,1000,ohmic,A,NET_DISCHARGE
+pwm_555_timer_trim_pot,555 PWM generator,R1,primitive,resistor,1000,ohmic,B,NET_TIMING_NODE
+pwm_555_timer_trim_pot,555 PWM generator,D1,primitive,diode,,,ANODE,NET_TIMING_NODE
+pwm_555_timer_trim_pot,555 PWM generator,D1,primitive,diode,,,CATHODE,NET_DISCHARGE
+pwm_555_timer_trim_pot,555 PWM generator,C1,primitive,capacitor,10,uf,A,NET_TIMING_NODE
+pwm_555_timer_trim_pot,555 PWM generator,C1,primitive,capacitor,10,uf,B,NET_GND
