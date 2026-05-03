@@ -20,10 +20,18 @@ Future integration:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
+from html import escape
 from typing import List
 
 import streamlit as st
+
+from src.graph import CircuitGraph, normalize_net_name
+from src.nodes import Node, Pin
+from src.simulator import tick_sim
+from ui.streamlit_ui.edge_styling import get_edge_style
+from ui.streamlit_ui.graph_styling import get_graph_config
+from ui.streamlit_ui.node_styling import get_node_label, get_node_style
 
 
 COMPONENT_KINDS = [
@@ -269,7 +277,138 @@ def _render_current_components() -> None:
     st.dataframe(rows, use_container_width=True)
 
 
-def render_circuit_builder() -> None:
+def _build_circuit_graph_from_session() -> CircuitGraph:
+    """
+    Convert the current form/session data into the shared CircuitGraph model.
+    """
+    graph = CircuitGraph(
+        circuit_name=st.session_state.get("circuit_name", ""),
+        description=st.session_state.get("circuit_description", ""),
+        notes=st.session_state.get("circuit_notes", ""),
+    )
+
+    for component in st.session_state.get("circuit_components", []):
+        pins = [
+            Pin(
+                name=pin.pin_name,
+                role=pin.pin_role.upper(),
+                net=normalize_net_name(pin.net_name),
+            )
+            for pin in component.pin_assignments
+        ]
+
+        graph.add_node(
+            Node(
+                ref_des=component.ref_des,
+                component_type=component.component_type,
+                component_kind=component.component_kind,
+                value=component.component_value,
+                value_type=component.component_value_type,
+                pins=pins,
+                notes=component.component_notes,
+            )
+        )
+
+        for pin in component.pin_assignments:
+            graph.add_edge(component.ref_des, pin.pin_name, pin.net_name)
+
+    return graph
+
+
+def _dot_attrs(attrs: dict[str, object]) -> str:
+    """
+    Format Graphviz attributes safely.
+    """
+    return ", ".join(
+        f'{key}="{escape(str(value), quote=True)}"'
+        for key, value in attrs.items()
+        if value is not None
+    )
+
+
+def _render_circuit_graph(graph: CircuitGraph, view: str) -> None:
+    """
+    Render the circuit graph using the styling helpers.
+    """
+    if not graph.nodes:
+        st.info("Add components to see the circuit graph.")
+        return
+
+    config = get_graph_config(view)
+    dot_lines = [
+        "digraph CircuitGraph {",
+        "rankdir=LR;",
+        f'bgcolor="{config["background"]}";',
+        "graph [pad=0.4, nodesep=0.8, ranksep=1.0];",
+        'node [shape=box, style="rounded,filled", fontname="Consolas"];',
+        'edge [fontname="Consolas"];',
+    ]
+
+    for node in graph.get_nodes_list():
+        style = get_node_style(node, view)
+        attrs = {
+            "label": get_node_label(node, view),
+            "color": style.get("color"),
+            "fillcolor": style.get("fillcolor"),
+            "fontcolor": style.get("fontcolor", "#111111"),
+            "penwidth": 2,
+        }
+        dot_lines.append(f'"{node.ref_des}" [{_dot_attrs(attrs)}];')
+
+    for net in graph.get_nets():
+        attrs = {
+            "label": net,
+            "shape": "ellipse",
+            "style": "filled",
+            "fillcolor": "#1F2933",
+            "fontcolor": "#E5E7EB",
+            "color": "#4B5563",
+        }
+        dot_lines.append(f'"{net}" [{_dot_attrs(attrs)}];')
+
+    for ref_des, pin_name, net_name in graph.get_edges_list():
+        style = get_edge_style(ref_des, pin_name, net_name, graph)
+        attrs = {
+            "label": pin_name,
+            "color": style.get("color"),
+            "penwidth": style.get("width"),
+            "fontcolor": style.get("color"),
+        }
+        dot_lines.append(f'"{ref_des}" -> "{net_name}" [{_dot_attrs(attrs)}];')
+
+    dot_lines.append("}")
+
+    st.graphviz_chart("\n".join(dot_lines), use_container_width=True)
+
+
+def _render_validation_status(graph: CircuitGraph) -> None:
+    """
+    Show lightweight simulator/validator output.
+    """
+    sim_result = tick_sim(graph)
+    st.session_state.graph_validation = sim_result
+
+    graph_state = sim_result["graph_state"][0]
+
+    if graph_state == "COMPLETE":
+        st.success("Graph state: COMPLETE")
+    elif graph_state == "PARTIAL":
+        st.warning("Graph state: PARTIAL")
+    else:
+        st.error("Graph state: INVALID")
+
+    if sim_result["warnings"]:
+        with st.expander("Validation warnings", expanded=False):
+            for warning in sim_result["warnings"]:
+                st.write(f"- {warning}")
+
+    if sim_result["errors"]:
+        with st.expander("Validation errors", expanded=True):
+            for error in sim_result["errors"]:
+                st.write(f"- {error}")
+
+
+def render_circuit_builder(graph_view: str = "Concept") -> None:
     """
     Render the circuit builder UI.
     """
@@ -368,6 +507,15 @@ def render_circuit_builder() -> None:
 
     st.subheader("Current Circuit Rows")
     _render_current_components()
+
+    graph = _build_circuit_graph_from_session()
+    st.session_state.circuit_graph = graph
+
+    st.divider()
+
+    st.subheader("Circuit Graph")
+    _render_validation_status(graph)
+    _render_circuit_graph(graph, graph_view)
 
     st.divider()
 

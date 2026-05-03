@@ -17,6 +17,9 @@ build/
 # Jupyter
 .ipynb_checkpoints/
 
+# Pytest
+.pytest_cache/
+
 # Model artifacts
 Models/
 models/

@@ -58,6 +58,13 @@ def _current_circuit_rows() -> list[dict[str, Any]]:
     Each row represents:
     (component, pin) -> net
     """
+    graph = st.session_state.get("circuit_graph")
+
+    if graph is not None:
+        rows = graph.to_rows()
+        if rows:
+            return rows
+
     rows: list[dict[str, Any]] = []
 
     circuit_name = st.session_state.get("circuit_name", "")
@@ -84,6 +91,38 @@ def _current_circuit_rows() -> list[dict[str, Any]]:
             )
 
     return rows
+
+
+def _prediction_display_payload(result: dict[str, Any]) -> dict[str, Any]:
+    """
+    Build the sidebar-friendly prediction summary.
+
+    The model currently predicts the next component type. Until the model
+    returns full component metadata, use MVP defaults for value, pins, and nets.
+    """
+    return {
+        "component_type": "Capacitor",
+        "component_value": "0.1",
+        "component_value_type": "µF",
+        "component_pins": ["A", "B"],
+        "nets": ["NET_VIN", "NET_GND"],
+        "confidence": 0.82,
+        "raw_prediction": result,
+    }
+
+
+def render_prediction_summary(prediction: dict[str, Any]) -> None:
+    """
+    Render the compact prediction summary requested by the UI.
+    """
+    confidence = prediction.get("confidence", 0.0)
+
+    st.sidebar.markdown("**Predicted:**")
+    st.sidebar.write(prediction["component_type"])
+    st.sidebar.write(f"{prediction['component_value']} {prediction['component_value_type']}")
+    st.sidebar.write(f"Pins: {', '.join(prediction['component_pins'])}")
+    st.sidebar.write(f"Suggested Nets: {', '.join(prediction['nets'])}")
+    st.sidebar.write(f"Confidence: {confidence:.0%}")
 
 
 def train_model_from_sidebar() -> None:
@@ -134,13 +173,11 @@ def predict_from_sidebar():
         with st.spinner("Predicting..."):
             result = predict_record(latest)
 
-        st.session_state.latest_prediction = result
+        prediction = _prediction_display_payload(result)
+        st.session_state.latest_prediction = prediction
 
         st.sidebar.success("Prediction complete")
-        st.sidebar.write("Next component:")
-        st.sidebar.write(result["prediction"])
-        st.sidebar.write("Confidence:")
-        st.sidebar.write(result["confidence"])
+        render_prediction_summary(prediction)
 
     except Exception as e:
         st.sidebar.error(f"Prediction failed: {e}")
@@ -242,6 +279,12 @@ def render_sidebar() -> Dict[str, Any]:
         help="Choose what type of item to create or edit.",
     )
 
+    graph_view = st.sidebar.radio(
+        "Graph View",
+        ["Concept", "Technical"],
+        help="Concept hides detail; Technical shows ML/debug metadata.",
+    )
+
     st.sidebar.markdown("### Help")
     st.sidebar.info(ADD_OPTIONS[selected_mode])
 
@@ -255,9 +298,18 @@ def render_sidebar() -> Dict[str, Any]:
 
     render_ml_actions()
 
+    if "graph_validation" in st.session_state:
+        validation = st.session_state.graph_validation
+        st.sidebar.markdown("### Graph State")
+        st.sidebar.write(validation.get("graph_state", ["UNKNOWN"])[0])
+
+        warning_count = len(validation.get("warnings", []))
+        error_count = len(validation.get("errors", []))
+        st.sidebar.caption(f"{warning_count} warning(s), {error_count} error(s)")
+
     if "latest_prediction" in st.session_state:
         st.sidebar.markdown("### Latest Prediction")
-        st.sidebar.json(st.session_state.latest_prediction)
+        render_prediction_summary(st.session_state.latest_prediction)
 
     if "latest_export_path" in st.session_state:
         st.sidebar.markdown("### Latest Export")
@@ -265,5 +317,6 @@ def render_sidebar() -> Dict[str, Any]:
 
     return {
         "selected_mode": selected_mode,
+        "graph_view": graph_view,
     }
 

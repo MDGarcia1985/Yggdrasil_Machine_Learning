@@ -7,6 +7,9 @@ from src.features import (
     get_dataset_summary,
     get_target_labels,
 )
+from src.graph import CircuitGraph, normalize_net_name
+from src.nodes import BEHAVIOR, ROLES, STATES, Node, Pin, init_default_nodes
+from src.edges import init_default_edges
 from src.predict import (
     evaluate_predictions,
     load_artifacts,
@@ -36,6 +39,13 @@ from src.train import (
     save_artifacts,
     train_model,
 )
+from src.simulator import (
+    mark_node_complete,
+    mark_prediction_accepted,
+    mark_prediction_rejected,
+    set_role,
+    tick_sim,
+)
 
 try:
     from src.feature_importance import (
@@ -50,6 +60,12 @@ except ImportError:
 
 __all__ = [
     "REQUIRED_COLUMNS",
+    "BEHAVIOR",
+    "CircuitGraph",
+    "Node",
+    "Pin",
+    "ROLES",
+    "STATES",
     "TARGET_COLUMN",
     "add_next_component_label",
     "build_feature_matrix",
@@ -63,6 +79,8 @@ __all__ = [
     "get_dataset_summary",
     "get_model_importance",
     "get_target_labels",
+    "init_default_edges",
+    "init_default_nodes",
     "load_and_split_data",
     "load_artifacts",
     "load_data",
@@ -70,6 +88,10 @@ __all__ = [
     "load_preprocessed_dataframe",
     "main",
     "model_accuracy",
+    "mark_node_complete",
+    "mark_prediction_accepted",
+    "mark_prediction_rejected",
+    "normalize_net_name",
     "predict_dataframe",
     "predict_model",
     "predict_record",
@@ -77,7 +99,9 @@ __all__ = [
     "print_top_importance",
     "save_artifacts",
     "select_columns",
+    "set_role",
     "split_data",
     "split_features_and_labels",
+    "tick_sim",
     "train_model",
 ]

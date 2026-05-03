@@ -11,10 +11,14 @@ Validates:
 - train/test split
 """
 
+import pandas as pd
+
 from src.preprocess import (
+    preprocess_dataframe,
     load_preprocessed_dataframe,
     load_and_split_data,
 )
+from src.graph import CircuitGraph
 from utils.run_tests import capture_output, log_test_output
 
 
@@ -42,6 +46,14 @@ def run_test() -> None:
     # Split pipeline
     X_train, X_test, y_train, y_test, feature_columns = load_and_split_data()
 
+    graph = CircuitGraph(
+        circuit_name="graph_smoke",
+        description="Graph-generated rows for preprocess smoke test.",
+    )
+    graph.load_default()
+    graph_rows = graph.to_rows()
+    graph_df = preprocess_dataframe(pd.DataFrame(graph_rows))
+
     print("\nTrain/Test Split:")
     print(f"X_train shape: {X_train.shape}")
     print(f"X_test shape: {X_test.shape}")
@@ -51,11 +63,18 @@ def run_test() -> None:
     print("\nFeature Columns:")
     print(feature_columns)
 
+    print("\nGraph Row Preprocess:")
+    print(f"Graph source rows: {len(graph_rows)}")
+    print(f"Graph preprocessed rows: {len(graph_df)}")
+    print(f"Graph target column exists: {'next_component_type' in graph_df.columns}")
+    print(graph_df.head())
+
     print("\nBasic Consistency Checks:")
     print(f"Training + Testing rows > 0: {len(X_train) + len(X_test) > 0}")
     print(f"Labels match feature rows: {len(X_train) == len(y_train)}")
     print(f"Test labels match: {len(X_test) == len(y_test)}")
     print(f"Target column exists: {'next_component_type' in df.columns}")
+    print(f"Graph rows flow through preprocessing: {len(graph_df) > 0}")
 
 
 def test_preprocess_smoke() -> None:

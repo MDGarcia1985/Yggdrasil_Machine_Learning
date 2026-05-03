@@ -6,36 +6,59 @@ MVP pipeline for **circuit row data**: clean tabular exports, engineer features,
 
 Python 3.11+ recommended. Install dependencies:
 
-```bash
-pip install -r requirements.txt
+```powershell
+.\venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
+
+If you are not using the project venv, use the same Python executable that will
+run the app.
 
 ## Run training (default sample)
 
 Uses `Data/raw/circuits_sample.csv` and writes under `Models/` (`model.pkl`, `encoder.pkl`, `feature_columns.pkl`, `training_report.pkl`).
 
-```bash
-python main.py
+```powershell
+.\venv\Scripts\python.exe main.py
 ```
 
 or:
 
-```bash
-python -m src.train
+```powershell
+.\venv\Scripts\python.exe -m src.train
 ```
 
 ## Run inference
 
 After training:
 
-```bash
-python -m src.predict
+```powershell
+.\venv\Scripts\python.exe -m src.predict
 ```
 
 ## Streamlit UI
 
-```bash
-streamlit run ui/app_streamlit.py
+Direct Streamlit launch:
+
+```powershell
+.\venv\Scripts\python.exe -m streamlit run ui/app_streamlit.py
+```
+
+Local launcher, which opens the browser after starting Streamlit:
+
+```powershell
+.\venv\Scripts\python.exe ui/launcher.py
+```
+
+Pipeline-first launcher:
+
+```powershell
+.\venv\Scripts\python.exe scripts/app/run_app.py
+```
+
+Skip retraining and launch only the app:
+
+```powershell
+.\venv\Scripts\python.exe scripts/app/run_app.py --skip-pipeline
 ```
 
 ## Layout
@@ -47,6 +70,7 @@ streamlit run ui/app_streamlit.py
 | `src/features.py` | Feature matrix and targets |
 | `src/train.py` | Train, evaluate, save artifacts |
 | `src/predict.py` | Load artifacts and predict |
+| `src/graph.py`, `src/nodes.py`, `src/edges.py`, `src/simulator.py` | Circuit graph model and lightweight validation |
 | `ui/` | Streamlit app |
 | `tests/` | Pytest smoke tests |
 

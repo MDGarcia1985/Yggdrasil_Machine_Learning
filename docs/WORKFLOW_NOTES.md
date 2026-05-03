@@ -142,7 +142,7 @@ When editing pipeline logic:
 1. Update function docstrings/comments in the same change.
 2. Keep training and prediction preprocessing aligned.
 3. Re-run tests:
-   - `pytest tests`
+   - `.\venv\Scripts\python.exe -m pytest tests`
 4. Check terminal + log output:
    - `tests/data/test_data.txt`
 5. If you add or remove features, confirm artifact compatibility:
@@ -152,13 +152,17 @@ When editing pipeline logic:
 ## Quick Start For New Contributors
 
 Run the canonical MVP pipeline:
-- `python main.py`
+- `.\venv\Scripts\python.exe main.py`
 
 Alternative (training only):
-- `python -m src.train`
+- `.\venv\Scripts\python.exe -m src.train`
 
 Run tests:
-- `pytest tests`
+- `.\venv\Scripts\python.exe -m pytest tests`
 
 Try prediction manually:
-- `python -m src.predict`
+- `.\venv\Scripts\python.exe -m src.predict`
+
+Launch the Streamlit UI:
+- `.\venv\Scripts\python.exe -m streamlit run ui/app_streamlit.py`
+- `.\venv\Scripts\python.exe ui/launcher.py`

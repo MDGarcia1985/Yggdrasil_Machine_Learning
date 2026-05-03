@@ -35,9 +35,10 @@ def render_main_panel() -> None:
     )
 
     selected_mode = sidebar_state.get("selected_mode", "New Circuit")
+    graph_view = sidebar_state.get("graph_view", "Concept")
 
     if selected_mode == "New Circuit":
-        render_circuit_builder()
+        render_circuit_builder(graph_view=graph_view)
 
     elif selected_mode == "New Primitive":
         st.subheader("New Primitive")

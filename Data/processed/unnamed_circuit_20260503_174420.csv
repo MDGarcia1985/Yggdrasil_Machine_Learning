@@ -1,0 +1,11 @@
+circuit_name,description,ref_des,component_kind,component_type,component_value,component_value_type,pin_name,net_name,circuit_notes,component_notes
+,,C1,primitive,capacitor,1,uF,A,NET_SW_IN,,RC timing
+,,C1,primitive,capacitor,1,uF,B,NET_Q1_BASE,,RC timing
+,,R1,primitive,resistor,10000,ohm,A,NET_VIN,,Pull-up
+,,R1,primitive,resistor,10000,ohm,B,NET_SW_IN,,Pull-up
+,,D1,primitive,diode,5,V,ANODE,NET_SW_IN,,SINK
+,,D1,primitive,diode,5,V,CATHODE,NET_Q1_BASE,,SINK
+,,V1,source,voltage,5,V,POS,NET_VIN,,SINGLE CELL BATT
+,,V1,source,voltage,5,V,NEG,NET_GND,,SINGLE CELL BATT
+,,X1,structure,rc_low_pass,5,V,A,NET_VIN,,SINGLE CELL BATT
+,,X1,structure,rc_low_pass,5,V,B,NET_GND,,SINGLE CELL BATT

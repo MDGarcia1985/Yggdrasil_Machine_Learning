@@ -13,6 +13,8 @@ Validates:
 """
 
 from src.preprocess import load_preprocessed_dataframe
+import pandas as pd
+
 from src.features import (
     build_feature_matrix,
     get_circuit_component_counts,
@@ -21,6 +23,8 @@ from src.features import (
     get_sample_rows,
     get_target_labels,
 )
+from src.graph import CircuitGraph
+from src.preprocess import preprocess_dataframe
 from utils.run_tests import capture_output, log_test_output
 
 
@@ -39,6 +43,15 @@ def run_test() -> None:
     y = get_target_labels(df)
     component_counts = get_circuit_component_counts(df)
     net_counts = get_net_connection_counts(df)
+
+    graph = CircuitGraph(
+        circuit_name="graph_feature_smoke",
+        description="Graph-generated rows for feature smoke test.",
+    )
+    graph.load_default()
+    graph_df = preprocess_dataframe(pd.DataFrame(graph.to_rows()))
+    graph_X_encoded, graph_encoder = build_feature_matrix(graph_df)
+    graph_y = get_target_labels(graph_df)
 
     print("\nDataset Summary:")
     print(summary)
@@ -65,12 +78,19 @@ def run_test() -> None:
     print("\nNet Counts:")
     print(net_counts.head(20))
 
+    print("\nGraph Feature Matrix:")
+    print(f"Graph rows: {len(graph_df)}")
+    print(f"Graph shape: {graph_X_encoded.shape}")
+    print(f"Graph labels: {sorted(graph_y.unique().tolist())}")
+    print(f"Graph encoder categories: {len(graph_encoder.categories_)}")
+
     print("\nBasic Consistency Checks:")
     print(f"Encoded rows match dataframe rows: {len(X_encoded) == len(df)}")
     print(f"Target rows match dataframe rows: {len(y) == len(df)}")
     print(f"Summary row count matches dataframe: {summary['num_rows'] == len(df)}")
     print(f"Sample rows default to 5 or less: {len(sample_rows) <= 5}")
     print(f"Encoded feature matrix has columns: {X_encoded.shape[1] > 0}")
+    print(f"Graph feature rows match graph dataframe: {len(graph_X_encoded) == len(graph_df)}")
 
 
 def test_features_smoke() -> None:

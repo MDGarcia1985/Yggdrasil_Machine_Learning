@@ -11,6 +11,22 @@ michael@mandedesign.studio
 CSC370 Spring 2026
 """
 
-from .streamlit_ui import render_main_panel, render_sidebar
-
 __all__ = ["render_main_panel", "render_sidebar"]
+
+
+def __getattr__(name):
+    """
+    Lazily expose Streamlit entrypoints without requiring Streamlit for every
+    import of the ui package.
+    """
+    if name == "render_main_panel":
+        from .streamlit_ui import render_main_panel
+
+        return render_main_panel
+
+    if name == "render_sidebar":
+        from .streamlit_ui import render_sidebar
+
+        return render_sidebar
+
+    raise AttributeError(f"module 'ui' has no attribute {name!r}")

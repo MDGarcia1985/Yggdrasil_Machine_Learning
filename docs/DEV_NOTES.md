@@ -1,6 +1,6 @@
 # DEV NOTES
 
-Last updated: 2026-05-02
+Last updated: 2026-05-03
 
 ## Current Execution Model
 
@@ -15,7 +15,7 @@ Canonical flow:
 Primary command:
 
 ```powershell
-python main.py
+.\venv\Scripts\python.exe main.py
 ```
 
 ## Key Entrypoints
@@ -34,12 +34,13 @@ python main.py
   - Runs `main.py` first by default, then launches Streamlit.
   - Use `--skip-pipeline` to launch app without retraining.
 
-- `scripts/run_app.py`
-  - Convenience wrapper for `scripts/app/run_app.py`.
-
 - `ui/app_streamlit.py`
   - Current Streamlit app entrypoint.
   - Imports `render_main_panel()` from `ui.streamlit_ui`.
+
+- `ui/launcher.py`
+  - Local browser-opening Streamlit launcher.
+  - Launches `ui/app_streamlit.py` through the current Python executable.
 
 ## Path Conventions
 
@@ -76,13 +77,45 @@ Path constants now include:
 Run all tests:
 
 ```powershell
-pytest tests
+.\venv\Scripts\python.exe -m pytest tests
 ```
 
 Run path-only checks:
 
 ```powershell
-pytest tests/test_paths.py
+.\venv\Scripts\python.exe -m pytest tests/test_paths.py
+```
+
+## Streamlit Run Commands
+
+Install dependencies into the same environment used to launch the app:
+
+```powershell
+.\venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+Direct Streamlit launch:
+
+```powershell
+.\venv\Scripts\python.exe -m streamlit run ui/app_streamlit.py
+```
+
+Browser-opening launcher:
+
+```powershell
+.\venv\Scripts\python.exe ui/launcher.py
+```
+
+Pipeline-first launcher:
+
+```powershell
+.\venv\Scripts\python.exe scripts/app/run_app.py
+```
+
+Skip retraining:
+
+```powershell
+.\venv\Scripts\python.exe scripts/app/run_app.py --skip-pipeline
 ```
 
 Test output behavior:
@@ -96,6 +129,12 @@ Current Streamlit wiring:
 - `ui/streamlit_ui/main_panel.py` imports:
   - `render_sidebar` from `ui.streamlit_ui.sidebar_ui`
   - `render_circuit_builder` from `ui.streamlit_ui.circuit_builder`
+- `ui/streamlit_ui/circuit_builder.py` builds `src.graph.CircuitGraph`
+  from session components and runs `src.simulator.tick_sim()`.
+- graph rendering uses:
+  - `ui.streamlit_ui.node_styling`
+  - `ui.streamlit_ui.edge_styling`
+  - `ui.streamlit_ui.graph_styling`
 
 Package exports:
 - `ui/streamlit_ui/__init__.py` exports:

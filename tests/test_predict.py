@@ -12,6 +12,9 @@ Validates:
 """
 
 from src.preprocess import load_preprocessed_dataframe
+import pandas as pd
+
+from src.graph import CircuitGraph
 from src.train import train_model, save_artifacts
 from src.predict import (
     predict_dataframe,
@@ -50,6 +53,15 @@ def run_test() -> None:
 
     prediction_df = predict_dataframe(df.head(10))
 
+    graph = CircuitGraph(
+        circuit_name="graph_prediction_smoke",
+        description="Graph-generated rows for prediction smoke test.",
+    )
+    graph.load_default()
+    graph_rows = graph.to_rows()
+    graph_prediction_df = predict_dataframe(pd.DataFrame(graph_rows))
+    graph_single_result = predict_record(graph_rows[0])
+
     print("\nDataFrame Prediction Sample:")
     print(prediction_df[[
         "component_type",
@@ -63,11 +75,23 @@ def run_test() -> None:
     print("\nSingle Row Prediction:")
     print(single_result)
 
+    print("\nGraph Prediction Sample:")
+    print(graph_prediction_df[[
+        "component_type",
+        "predicted_next_component_type",
+        "prediction_confidence",
+    ]].head())
+
+    print("\nGraph Single Row Prediction:")
+    print(graph_single_result)
+
     print("\nBasic Consistency Checks:")
     print(f"Prediction count matches test rows: {len(predictions) == len(y_test_out)}")
     print(f"Evaluation count matches predictions: {len(results) == len(predictions)}")
     print(f"Accuracy between 0 and 1: {0 <= accuracy <= 1}")
     print(f"Prediction DF has results: {'predicted_next_component_type' in prediction_df.columns}")
+    print(f"Graph prediction DF has results: {'predicted_next_component_type' in graph_prediction_df.columns}")
+    print(f"Graph single prediction has prediction: {'prediction' in graph_single_result}")
 
 
 def test_predict_smoke() -> None:
