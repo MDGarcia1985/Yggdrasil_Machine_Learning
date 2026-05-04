@@ -14,6 +14,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "Data"
 RAW_DATA_DIR = DATA_DIR / "raw"
 RAW_CIRCUITS_SAMPLE = RAW_DATA_DIR / "circuits_sample.csv"
+RAW_CIRCUIT_SAMPLE_TWO = RAW_DATA_DIR / "circuit_sample_two.csv"
+TRAINING_DATA_PATHS = [
+    RAW_CIRCUITS_SAMPLE,
+    RAW_CIRCUIT_SAMPLE_TWO,
+]
 
 MODELS_DIR = PROJECT_ROOT / "Models"
 MODEL_PATH = MODELS_DIR / "model.pkl"

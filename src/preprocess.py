@@ -20,13 +20,18 @@ CSV / SQL query export -> cleaned DataFrame -> engineered features -> labels -> 
 from __future__ import annotations
 
 from pathlib import Path
-from typing import List, Tuple
+from typing import Iterable, List, Tuple
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
 DEFAULT_DATA_PATH = Path("Data/raw/circuits_sample.csv")
+SECONDARY_DATA_PATH = Path("Data/raw/circuit_sample_two.csv")
+DEFAULT_DATA_PATHS = [
+    DEFAULT_DATA_PATH,
+    SECONDARY_DATA_PATH,
+]
 
 REQUIRED_COLUMNS = [
     "circuit_name",
@@ -43,23 +48,40 @@ REQUIRED_COLUMNS = [
 TARGET_COLUMN = "next_component_type"
 
 
-def load_data(file_path: str | Path = DEFAULT_DATA_PATH) -> pd.DataFrame:
+def _normalize_data_paths(file_path: str | Path | Iterable[str | Path]) -> List[Path]:
     """
-    Load the circuit dataset from CSV.
+    Normalize one or more CSV paths into Path objects.
+    """
+    if isinstance(file_path, (str, Path)):
+        return [Path(file_path)]
+
+    return [Path(path) for path in file_path]
+
+
+def load_data(file_path: str | Path | Iterable[str | Path] = DEFAULT_DATA_PATHS) -> pd.DataFrame:
+    """
+    Load one or more circuit CSV datasets.
 
     Args:
         file_path:
-            Path to the raw circuit dataset.
+            Path or iterable of paths to raw circuit CSV files.
 
     Returns:
-        Raw pandas DataFrame.
+        Raw pandas DataFrame. Multiple files are concatenated in order.
     """
-    file_path = Path(file_path)
+    paths = _normalize_data_paths(file_path)
+    frames = []
 
-    if not file_path.exists():
-        raise FileNotFoundError(f"Data file not found: {file_path}")
+    for path in paths:
+        if not path.exists():
+            raise FileNotFoundError(f"Data file not found: {path}")
 
-    return pd.read_csv(file_path)
+        frames.append(pd.read_csv(path))
+
+    if not frames:
+        raise ValueError("At least one data file path is required.")
+
+    return pd.concat(frames, ignore_index=True)
 
 
 def select_columns(df: pd.DataFrame, required_columns: List[str] | None = None) -> pd.DataFrame:
@@ -227,7 +249,9 @@ def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def load_preprocessed_dataframe(file_path: str | Path = DEFAULT_DATA_PATH) -> pd.DataFrame:
+def load_preprocessed_dataframe(
+    file_path: str | Path | Iterable[str | Path] = DEFAULT_DATA_PATHS,
+) -> pd.DataFrame:
     """
     Load and fully preprocess a circuit dataset.
     """
@@ -270,7 +294,7 @@ def split_data(
 
 
 def load_and_split_data(
-    file_path: str | Path = DEFAULT_DATA_PATH,
+    file_path: str | Path | Iterable[str | Path] = DEFAULT_DATA_PATHS,
     test_size: float = 0.2,
     random_state: int = 42,
 ):

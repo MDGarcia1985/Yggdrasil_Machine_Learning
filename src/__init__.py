@@ -19,7 +19,10 @@ from src.predict import (
     predict_record,
 )
 from src.preprocess import (
+    DEFAULT_DATA_PATH,
+    DEFAULT_DATA_PATHS,
     REQUIRED_COLUMNS,
+    SECONDARY_DATA_PATH,
     add_next_component_label,
     clean_categorical_data,
     clean_missing_rows,
@@ -59,12 +62,15 @@ except ImportError:
     print_top_importance = None
 
 __all__ = [
-    "REQUIRED_COLUMNS",
     "BEHAVIOR",
     "CircuitGraph",
+    "DEFAULT_DATA_PATH",
+    "DEFAULT_DATA_PATHS",
     "Node",
+    "REQUIRED_COLUMNS",
     "Pin",
     "ROLES",
+    "SECONDARY_DATA_PATH",
     "STATES",
     "TARGET_COLUMN",
     "add_next_component_label",

@@ -10,7 +10,8 @@ Yggdrasil_Machine_Learning/
 |
 |-- Data/
 |   |-- raw/
-|   |   |-- circuits_sample.csv   # MVP default input
+|   |   |-- circuits_sample.csv   # MVP training input
+|   |   |-- circuit_sample_two.csv # additional training input
 |   |   `-- (legacy ww2 samples, optional)
 |   `-- processed/
 |

@@ -7,7 +7,9 @@ Last updated: 2026-05-03
 The project now runs through `main.py`.
 
 Canonical flow:
-1. Load and preprocess `Data/raw/circuits_sample.csv`
+1. Load and preprocess configured training CSVs:
+   - `Data/raw/circuits_sample.csv`
+   - `Data/raw/circuit_sample_two.csv`
 2. Train model (`next_component_type` target)
 3. Save artifacts to `Models/`
 4. Run a small prediction preview
@@ -63,7 +65,9 @@ Path constants now include:
 
 ## Current Data/Artifact Locations
 
-- Input sample: `Data/raw/circuits_sample.csv`
+- Input samples:
+  - `Data/raw/circuits_sample.csv`
+  - `Data/raw/circuit_sample_two.csv`
 - Artifacts:
   - `Models/model.pkl`
   - `Models/encoder.pkl`

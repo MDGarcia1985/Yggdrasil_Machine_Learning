@@ -10,7 +10,9 @@ Primary audience:
 ## Big Picture
 
 The MVP goal is:
-- Load `Data/raw/circuits_sample.csv`
+- Load configured training CSVs from `Data/raw/`
+  - `circuits_sample.csv`
+  - `circuit_sample_two.csv`
 - Train a model that predicts `next_component_type`
 - Save artifacts for later prediction
 - Use those artifacts for single-row or batch inference
@@ -24,7 +26,7 @@ Core modules:
 
 ## End-to-End Data Flow
 
-1. Raw CSV is read from disk.
+1. Raw CSV files are read from disk and concatenated.
 2. Required columns are validated and selected.
 3. Text and numeric values are cleaned.
 4. Rows missing critical identity fields are removed.

@@ -15,7 +15,12 @@ run the app.
 
 ## Run training (default sample)
 
-Uses `Data/raw/circuits_sample.csv` and writes under `Models/` (`model.pkl`, `encoder.pkl`, `feature_columns.pkl`, `training_report.pkl`).
+Uses the configured training CSV files:
+
+- `Data/raw/circuits_sample.csv`
+- `Data/raw/circuit_sample_two.csv`
+
+Training writes under `Models/` (`model.pkl`, `encoder.pkl`, `feature_columns.pkl`, `training_report.pkl`).
 
 ```powershell
 .\venv\Scripts\python.exe main.py
@@ -65,7 +70,7 @@ Skip retraining and launch only the app:
 
 | Path | Role |
 |------|------|
-| `Data/raw/` | Input CSV (sample: `circuits_sample.csv`) |
+| `Data/raw/` | Input CSVs (`circuits_sample.csv`, `circuit_sample_two.csv`) |
 | `src/preprocess.py` | Load, clean, engineer, labels |
 | `src/features.py` | Feature matrix and targets |
 | `src/train.py` | Train, evaluate, save artifacts |

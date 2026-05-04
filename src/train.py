@@ -21,13 +21,13 @@ Primary MVP target:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict, Iterable
 
 import joblib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
-from src.preprocess import load_preprocessed_dataframe, split_data
+from src.preprocess import DEFAULT_DATA_PATHS, load_preprocessed_dataframe, split_data
 from src.features import build_feature_matrix, get_target_labels
 from src.feature_importance import get_model_importance, print_top_importance
 
@@ -38,11 +38,8 @@ ENCODER_PATH = MODEL_DIR / "encoder.pkl"
 FEATURE_COLUMNS_PATH = MODEL_DIR / "feature_columns.pkl"
 TRAINING_REPORT_PATH = MODEL_DIR / "training_report.pkl"
 
-DEFAULT_DATA_PATH = Path("Data/raw/circuits_sample.csv")
-
-
 def train_model(
-    csv_path: str | Path = DEFAULT_DATA_PATH,
+    csv_path: str | Path | Iterable[str | Path] = DEFAULT_DATA_PATHS,
     test_size: float = 0.2,
     random_state: int = 42,
     n_estimators: int = 200,
@@ -52,7 +49,7 @@ def train_model(
 
     Args:
         csv_path:
-            Path to the raw circuit CSV.
+            Path or list of paths to raw circuit CSV files.
         test_size:
             Fraction of data reserved for test set.
         random_state:

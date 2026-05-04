@@ -1,0 +1,361 @@
+circuit_name,description,ref_des,component_kind,component_type,component_value,component_value_type,pin_name,net_name
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,V1,source,voltage,9,v,POS,NET_VCC
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,V1,source,voltage,9,v,NEG,NET_GND
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,R1,primitive,resistor,50000,ohmic,A,NET_VCC
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,R1,primitive,resistor,50000,ohmic,B,NET_GATE
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,R2,primitive,resistor,5000,ohmic,A,NET_GATE
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,R2,primitive,resistor,5000,ohmic,B,NET_GND
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,Q1,primitive,mosfet,,,GATE,NET_GATE
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,Q1,primitive,mosfet,,,DRAIN,NET_DRAIN
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,Q1,primitive,mosfet,,,SOURCE,NET_GND
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,R3,primitive,resistor,1000,ohmic,A,NET_VCC
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,R3,primitive,resistor,1000,ohmic,B,NET_R3_B_TO_D1_ANODE
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,D1,primitive,led,,,ANODE,NET_R3_B_TO_D1_ANODE
+ldr_voltage_divider_mosfet_led_control,ldr voltage divider mosfet led control,D1,primitive,led,,,CATHODE,NET_DRAIN
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,V1,source,voltage,9,v,POS,NET_VCC
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,V1,source,voltage,9,v,NEG,NET_GND
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,SW1,primitive,switch,,,A,NET_VCC
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,SW1,primitive,switch,,,B,NET_COIL_POS
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,K1,part,relay,9,v,COIL_A1,NET_COIL_POS
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,K1,part,relay,9,v,COIL_A2,NET_GND
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,D2,primitive,diode,,,ANODE,NET_GND
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,D2,primitive,diode,,,CATHODE,NET_COIL_POS
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,R1,primitive,resistor,1000,ohmic,A,NET_VCC
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,R1,primitive,resistor,1000,ohmic,B,NET_R1_B_TO_D1_ANODE
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,D1,primitive,led,,,ANODE,NET_R1_B_TO_D1_ANODE
+relay_coil_drive_with_flyback_and_indicator,relay coil drive with flyback and indicator,D1,primitive,led,,,CATHODE,NET_COIL_POS
+rc_charge_delay_led_timer,rc charge delay led timer,V1,source,voltage,9,v,POS,NET_VCC
+rc_charge_delay_led_timer,rc charge delay led timer,V1,source,voltage,9,v,NEG,NET_GND
+rc_charge_delay_led_timer,rc charge delay led timer,R1,primitive,resistor,22000,ohmic,A,NET_VCC
+rc_charge_delay_led_timer,rc charge delay led timer,R1,primitive,resistor,22000,ohmic,B,NET_RC_NODE
+rc_charge_delay_led_timer,rc charge delay led timer,C1,primitive,capacitor,100,uf,A,NET_RC_NODE
+rc_charge_delay_led_timer,rc charge delay led timer,C1,primitive,capacitor,100,uf,B,NET_GND
+rc_charge_delay_led_timer,rc charge delay led timer,R2,primitive,resistor,1000,ohmic,A,NET_RC_NODE
+rc_charge_delay_led_timer,rc charge delay led timer,R2,primitive,resistor,1000,ohmic,B,NET_R2_B_TO_D1_ANODE
+rc_charge_delay_led_timer,rc charge delay led timer,D1,primitive,led,,,ANODE,NET_R2_B_TO_D1_ANODE
+rc_charge_delay_led_timer,rc charge delay led timer,D1,primitive,led,,,CATHODE,NET_GND
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,V1,source,voltage,9,v,POS,NET_VCC
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,V1,source,voltage,9,v,NEG,NET_GND
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,R1,primitive,resistor,10000,ohmic,A,NET_VCC
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,R1,primitive,resistor,10000,ohmic,B,NET_GATE
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,SW1,primitive,switch,,,A,NET_GATE
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,SW1,primitive,switch,,,B,NET_GND
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,Q1,primitive,mosfet,,,GATE,NET_GATE
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,Q1,primitive,mosfet,,,DRAIN,NET_OUT
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,Q1,primitive,mosfet,,,SOURCE,NET_GND
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,R2,primitive,resistor,1000,ohmic,A,NET_VCC
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,R2,primitive,resistor,1000,ohmic,B,NET_R2_B_TO_D1_ANODE
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,D1,primitive,led,,,ANODE,NET_R2_B_TO_D1_ANODE
+mosfet_low_side_switch_with_pull_up_gate,mosfet low side switch with pull up gate,D1,primitive,led,,,CATHODE,NET_OUT
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,V1,source,voltage,9,v,POS,NET_VCC
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,V1,source,voltage,9,v,NEG,NET_GND
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,SW1,primitive,switch,,,A,NET_VCC
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,SW1,primitive,switch,,,B,NET_GATE
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,R1,primitive,resistor,10000,ohmic,A,NET_GATE
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,R1,primitive,resistor,10000,ohmic,B,NET_GND
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,Q1,primitive,mosfet,,,GATE,NET_GATE
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,Q1,primitive,mosfet,,,DRAIN,NET_OUT
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,Q1,primitive,mosfet,,,SOURCE,NET_GND
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,R2,primitive,resistor,1000,ohmic,A,NET_VCC
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,R2,primitive,resistor,1000,ohmic,B,NET_R2_B_TO_D1_ANODE
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,D1,primitive,led,,,ANODE,NET_R2_B_TO_D1_ANODE
+mosfet_low_side_switch_with_pull_down,mosfet low side switch with pull down,D1,primitive,led,,,CATHODE,NET_OUT
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,V1,source,voltage,9,v,POS,NET_VCC
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,V1,source,voltage,9,v,NEG,NET_GND
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,R1,primitive,resistor,1000,ohmic,A,NET_VCC
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,R1,primitive,resistor,1000,ohmic,B,NET_DRAIN
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,D1,primitive,led,,,ANODE,NET_DRAIN
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,D1,primitive,led,,,CATHODE,NET_DRAIN_MOSFET
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,Q1,primitive,mosfet,,,DRAIN,NET_DRAIN_MOSFET
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,Q1,primitive,mosfet,,,SOURCE,NET_GND
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,Q1,primitive,mosfet,,,GATE,NET_GATE
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,R2,primitive,resistor,10000,ohmic,A,NET_GATE
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,R2,primitive,resistor,10000,ohmic,B,NET_GND
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,SW1,primitive,switch,,,A,NET_VCC
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,SW1,primitive,switch,,,B,NET_GATE
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,SW2,primitive,switch,,,A,NET_VCC
+mosfet_or_logic_gate_dual_switch,mosfet or logic gate dual switch,SW2,primitive,switch,,,B,NET_GATE
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,V1,source,voltage,9,v,POS,NET_VCC
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,V1,source,voltage,9,v,NEG,NET_GND
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,SW1,primitive,switch,,,A,NET_VCC
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,SW1,primitive,switch,,,B,NET_INPUT
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,R2,primitive,resistor,1000,ohmic,A,NET_INPUT
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,R2,primitive,resistor,1000,ohmic,B,NET_BASE
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,R4,primitive,resistor,10000,ohmic,A,NET_BASE
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,R4,primitive,resistor,10000,ohmic,B,NET_GND
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,Q1,primitive,transistor,,,BASE,NET_BASE
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,Q1,primitive,transistor,,,COLLECTOR,NET_OUT
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,Q1,primitive,transistor,,,EMITTER,NET_GND
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,R1,primitive,resistor,4700,ohmic,A,NET_VCC
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,R1,primitive,resistor,4700,ohmic,B,NET_OUT
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,R3,primitive,resistor,1000,ohmic,A,NET_OUT
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,R3,primitive,resistor,1000,ohmic,B,NET_R3_B_TO_D1_ANODE
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,D1,primitive,led,,,ANODE,NET_R3_B_TO_D1_ANODE
+bjt_not_logic_inverter_with_led,bjt not logic inverter with led,D1,primitive,led,,,CATHODE,NET_GND
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,V1,source,voltage,9,v,POS,NET_VCC
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,V1,source,voltage,9,v,NEG,NET_GND
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,SW1,primitive,switch,,,A,NET_VCC
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,SW1,primitive,switch,,,B,NET_INPUT1
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,SW2,primitive,switch,,,A,NET_VCC
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,SW2,primitive,switch,,,B,NET_INPUT2
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,R1,primitive,resistor,1000,ohmic,A,NET_INPUT1
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,R1,primitive,resistor,1000,ohmic,B,NET_R1_B_TO_Q1_BASE
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,Q1,primitive,transistor,,,BASE,NET_R1_B_TO_Q1_BASE
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,R2,primitive,resistor,1000,ohmic,A,NET_INPUT2
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,R2,primitive,resistor,1000,ohmic,B,NET_R2_B_TO_Q2_BASE
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,Q2,primitive,transistor,,,BASE,NET_R2_B_TO_Q2_BASE
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,Q1,primitive,transistor,,,COLLECTOR,NET_OUT
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,Q1,primitive,transistor,,,EMITTER,NET_GND
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,Q2,primitive,transistor,,,COLLECTOR,NET_OUT
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,Q2,primitive,transistor,,,EMITTER,NET_GND
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,R3,primitive,resistor,1000,ohmic,A,NET_VCC
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,R3,primitive,resistor,1000,ohmic,B,NET_OUT
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,D1,primitive,led,,,ANODE,NET_OUT
+bjt_nor_logic_gate_dual_input,bjt nor logic gate dual input,D1,primitive,led,,,CATHODE,NET_GND
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,V1,source,voltage,9,v,POS,NET_VCC
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,V1,source,voltage,9,v,NEG,NET_GND
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,SW1,primitive,switch,,,A,NET_VCC
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,SW1,primitive,switch,,,B,NET_INPUT1
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,SW2,primitive,switch,,,A,NET_VCC
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,SW2,primitive,switch,,,B,NET_INPUT2
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,R1,primitive,resistor,1000,ohmic,A,NET_INPUT1
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,R1,primitive,resistor,1000,ohmic,B,NET_R1_B_TO_Q1_BASE
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,Q1,primitive,transistor,,,BASE,NET_R1_B_TO_Q1_BASE
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,R2,primitive,resistor,1000,ohmic,A,NET_INPUT2
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,R2,primitive,resistor,1000,ohmic,B,NET_R2_B_TO_Q2_BASE
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,Q2,primitive,transistor,,,BASE,NET_R2_B_TO_Q2_BASE
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,Q1,primitive,transistor,,,COLLECTOR,NET_OUT
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,Q1,primitive,transistor,,,EMITTER,NET_NODE_MID
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,Q2,primitive,transistor,,,COLLECTOR,NET_NODE_MID
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,Q2,primitive,transistor,,,EMITTER,NET_GND
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,R3,primitive,resistor,1000,ohmic,A,NET_VCC
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,R3,primitive,resistor,1000,ohmic,B,NET_OUT
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,D1,primitive,led,,,ANODE,NET_OUT
+bjt_nand_logic_gate_dual_input,bjt nand logic gate dual input,D1,primitive,led,,,CATHODE,NET_GND
+lc_transient_switch_led_indicator,lc transient switch led indicator,V1,source,voltage,9,v,POS,NET_VCC
+lc_transient_switch_led_indicator,lc transient switch led indicator,V1,source,voltage,9,v,NEG,NET_GND
+lc_transient_switch_led_indicator,lc transient switch led indicator,SW1,primitive,switch,,,COMMON,NET_SWITCH_NODE
+lc_transient_switch_led_indicator,lc transient switch led indicator,SW1,primitive,switch,,,THROW1,NET_VCC
+lc_transient_switch_led_indicator,lc transient switch led indicator,SW1,primitive,switch,,,THROW2,NET_SW1_THROW2_TO_L1_A
+lc_transient_switch_led_indicator,lc transient switch led indicator,L1,primitive,inductor,1,mh,A,NET_SW1_THROW2_TO_L1_A
+lc_transient_switch_led_indicator,lc transient switch led indicator,L1,primitive,inductor,1,mh,B,NET_GND
+lc_transient_switch_led_indicator,lc transient switch led indicator,R1,primitive,resistor,470,ohmic,A,NET_SWITCH_NODE
+lc_transient_switch_led_indicator,lc transient switch led indicator,R1,primitive,resistor,470,ohmic,B,NET_OUTPUT
+lc_transient_switch_led_indicator,lc transient switch led indicator,C1,primitive,capacitor,1,mf,A,NET_SWITCH_NODE
+lc_transient_switch_led_indicator,lc transient switch led indicator,C1,primitive,capacitor,1,mf,B,NET_GND
+lc_transient_switch_led_indicator,lc transient switch led indicator,D1,primitive,led,,,ANODE,NET_OUTPUT
+lc_transient_switch_led_indicator,lc transient switch led indicator,D1,primitive,led,,,CATHODE,NET_GND
+lc_transient_switch_led_indicator,lc transient switch led indicator,D2,primitive,led,,,CATHODE,NET_OUTPUT
+lc_transient_switch_led_indicator,lc transient switch led indicator,D2,primitive,led,,,ANODE,NET_GND
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,V1,source,voltage,9,v,POS,NET_VCC
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,V1,source,voltage,9,v,NEG,NET_GND
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,C1,primitive,capacitor,1000,uf,A,NET_VCC
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,C1,primitive,capacitor,1000,uf,B,NET_GND
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,SW1,primitive,switch,,,COMMON,NET_VCC
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,SW1,primitive,switch,,,THROW1,NET_CTRL_LEFT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,SW1,primitive,switch,,,THROW2,NET_CTRL_RIGHT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R7,primitive,resistor,10000,ohmic,A,NET_CTRL_LEFT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R7,primitive,resistor,10000,ohmic,B,NET_GND
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R8,primitive,resistor,10000,ohmic,A,NET_CTRL_RIGHT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R8,primitive,resistor,10000,ohmic,B,NET_GND
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R1,primitive,resistor,1000,ohmic,A,NET_CTRL_LEFT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R1,primitive,resistor,1000,ohmic,B,NET_R1_B_TO_Q3_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q3,primitive,transistor,,,BASE,NET_R1_B_TO_Q3_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R2,primitive,resistor,1000,ohmic,A,NET_CTRL_LEFT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R2,primitive,resistor,1000,ohmic,B,NET_R2_B_TO_Q1_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q1,primitive,transistor,,,BASE,NET_R2_B_TO_Q1_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R6,primitive,resistor,1000,ohmic,A,NET_CTRL_RIGHT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R6,primitive,resistor,1000,ohmic,B,NET_R6_B_TO_Q4_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q4,primitive,transistor,,,BASE,NET_R6_B_TO_Q4_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R5,primitive,resistor,1000,ohmic,A,NET_CTRL_RIGHT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R5,primitive,resistor,1000,ohmic,B,NET_R5_B_TO_Q2_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q2,primitive,transistor,,,BASE,NET_R5_B_TO_Q2_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R3,primitive,resistor,2000,ohmic,A,NET_R3_A_TO_Q1_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q1,primitive,transistor,,,BASE,NET_R3_A_TO_Q1_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R3,primitive,resistor,2000,ohmic,B,NET_GND
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R4,primitive,resistor,2000,ohmic,A,NET_R4_A_TO_Q2_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q2,primitive,transistor,,,BASE,NET_R4_A_TO_Q2_BASE
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,R4,primitive,resistor,2000,ohmic,B,NET_GND
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q3,primitive,transistor,,,COLLECTOR,NET_VCC
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q3,primitive,transistor,,,EMITTER,NET_MOTOR_LEFT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q1,primitive,transistor,,,COLLECTOR,NET_MOTOR_LEFT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q1,primitive,transistor,,,EMITTER,NET_GND
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q4,primitive,transistor,,,COLLECTOR,NET_VCC
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q4,primitive,transistor,,,EMITTER,NET_MOTOR_RIGHT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q2,primitive,transistor,,,COLLECTOR,NET_MOTOR_RIGHT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,Q2,primitive,transistor,,,EMITTER,NET_GND
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,M1,part,motor,9,v,A,NET_MOTOR_LEFT
+h_bridge_motor_driver_spdt_control,h bridge motor driver spdt control,M1,part,motor,9,v,B,NET_MOTOR_RIGHT
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,V1,source,voltage,9,v,POS,NET_VCC
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,V1,source,voltage,9,v,NEG,NET_GND
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,R1,primitive,resistor,1000,ohmic,A,NET_VCC
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,R1,primitive,resistor,1000,ohmic,B,NET_INPUT
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,SW1,primitive,switch,,,A,NET_INPUT
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,SW1,primitive,switch,,,B,NET_GND
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,R2,primitive,resistor,1000,ohmic,A,NET_INPUT
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,R2,primitive,resistor,1000,ohmic,B,NET_BASE
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,D2,primitive,diode,,,ANODE,NET_BASE
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,D2,primitive,diode,,,CATHODE,NET_INPUT
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,C1,primitive,capacitor,100,nf,A,NET_BASE
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,C1,primitive,capacitor,100,nf,B,NET_GND
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,Q1,primitive,transistor,,,BASE,NET_BASE
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,Q1,primitive,transistor,,,EMITTER,NET_GND
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,Q1,primitive,transistor,,,COLLECTOR,NET_OUT
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,R3,primitive,resistor,470,ohmic,A,NET_VCC
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,R3,primitive,resistor,470,ohmic,B,NET_R3_B_TO_D1_ANODE
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,D1,primitive,led,,,ANODE,NET_R3_B_TO_D1_ANODE
+bjt_button_debounce_rc_with_diode,bjt button debounce rc with diode,D1,primitive,led,,,CATHODE,NET_OUT
+led_series_current_limiting_resistor,led series current limiting resistor,V1,source,voltage,9,v,POS,NET_VCC
+led_series_current_limiting_resistor,led series current limiting resistor,V1,source,voltage,9,v,NEG,NET_GND
+led_series_current_limiting_resistor,led series current limiting resistor,R1,primitive,resistor,1000,ohmic,A,NET_VCC
+led_series_current_limiting_resistor,led series current limiting resistor,R1,primitive,resistor,1000,ohmic,B,NET_SERIES
+led_series_current_limiting_resistor,led series current limiting resistor,D1,primitive,led,,,ANODE,NET_SERIES
+led_series_current_limiting_resistor,led series current limiting resistor,D1,primitive,led,,,CATHODE,NET_GND
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,V1,source,voltage,9,v,POS,NET_VCC
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,V1,source,voltage,9,v,NEG,NET_GND
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,R1,primitive,resistor,220,ohmic,A,NET_VCC
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,R1,primitive,resistor,220,ohmic,B,NET_DIV_TOP
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,RV1,primitive,potentiometer,1000,ohmic,PIN2 (WIPER),NET_DIV_TOP
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,RV1,primitive,potentiometer,1000,ohmic,PIN1,NET_DIV_LEFT
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,RV1,primitive,potentiometer,1000,ohmic,PIN3,NET_DIV_RIGHT
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,D1,primitive,led,,,ANODE,NET_DIV_LEFT
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,D1,primitive,led,,,CATHODE,NET_GND
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,D2,primitive,led,,,ANODE,NET_DIV_RIGHT
+potentiometer_current_divider_dual_led,potentiometer current divider dual led,D2,primitive,led,,,CATHODE,NET_GND
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,V1,source,voltage,9,v,POS,NET_VCC
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,V1,source,voltage,9,v,NEG,NET_GND
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,Q1,primitive,transistor,,,COLLECTOR,NET_Q1_COLLECTOR
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,Q1,primitive,transistor,,,BASE,NET_Q1_BASE
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,Q1,primitive,transistor,,,EMITTER,NET_GND
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,Q2,primitive,transistor,,,COLLECTOR,NET_Q2_COLLECTOR
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,Q2,primitive,transistor,,,BASE,NET_Q2_BASE
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,Q2,primitive,transistor,,,EMITTER,NET_GND
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,R2,primitive,resistor,20000,ohmic,A,NET_VCC
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,R2,primitive,resistor,20000,ohmic,B,NET_Q1_BASE
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,R3,primitive,resistor,20000,ohmic,A,NET_VCC
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,R3,primitive,resistor,20000,ohmic,B,NET_Q2_BASE
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,C1,primitive,capacitor,20,uf,A,NET_Q1_COLLECTOR
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,C1,primitive,capacitor,20,uf,B,NET_Q2_BASE
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,C2,primitive,capacitor,20,uf,A,NET_Q2_COLLECTOR
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,C2,primitive,capacitor,20,uf,B,NET_Q1_BASE
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,D1,primitive,led,,,ANODE,NET_VCC
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,D1,primitive,led,,,CATHODE,NET_D1_CATHODE_TO_R1_A
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,R1,primitive,resistor,220,ohmic,A,NET_D1_CATHODE_TO_R1_A
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,R1,primitive,resistor,220,ohmic,B,NET_Q1_COLLECTOR
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,D2,primitive,led,,,ANODE,NET_VCC
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,D2,primitive,led,,,CATHODE,NET_D2_CATHODE_TO_R4_A
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,R4,primitive,resistor,220,ohmic,A,NET_D2_CATHODE_TO_R4_A
+bjt_astable_multivibrator_dual_led,bjt astable multivibrator dual led,R4,primitive,resistor,220,ohmic,B,NET_Q2_COLLECTOR
+and_logic_gate,and logic gate,V1,source,voltage,9,v,POS,NET_VIN
+and_logic_gate,and logic gate,V1,source,voltage,9,v,NEG,NET_GND
+and_logic_gate,and logic gate,R1,primitive,resistor,1000,ohmic,A,NET_VIN
+and_logic_gate,and logic gate,R1,primitive,resistor,1000,ohmic,B,NET_DRAIN
+and_logic_gate,and logic gate,D1,primitive,led,,,ANODE,NET_DRAIN
+and_logic_gate,and logic gate,D1,primitive,led,,,CATHODE,NET_DRAIN_MOSFET
+and_logic_gate,and logic gate,Q1,primitive,mosfet,,,DRAIN,NET_DRAIN_MOSFET
+and_logic_gate,and logic gate,Q1,primitive,mosfet,,,SOURCE,NET_GND
+and_logic_gate,and logic gate,Q1,primitive,mosfet,,,GATE,NET_GATE
+and_logic_gate,and logic gate,R2,primitive,resistor,10000,ohmic,A,NET_GATE
+and_logic_gate,and logic gate,R2,primitive,resistor,10000,ohmic,B,NET_GND
+and_logic_gate,and logic gate,SW2,primitive,switch,,,A,NET_VIN
+and_logic_gate,and logic gate,SW2,primitive,switch,,,B,NET_GATE_CTRL
+and_logic_gate,and logic gate,SW1,primitive,switch,,,A,NET_GATE_CTRL
+and_logic_gate,and logic gate,SW1,primitive,switch,,,B,NET_GATE
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,V1,source,voltage,9,v,POS,NET_VCC
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,V1,source,voltage,9,v,NEG,NET_GND
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,U1,block,555_timer,,,VCC,NET_VCC
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,U1,block,555_timer,,,GND,NET_GND
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,U1,block,555_timer,,,RESET,NET_VCC
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,U1,block,555_timer,,,CTRL,NET_CONTROL
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,U1,block,555_timer,,,OUT,NET_OUT
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,U1,block,555_timer,,,DISCH,NET_DISCH
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,U1,block,555_timer,,,THRESH,NET_TIMING
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,U1,block,555_timer,,,TRIG,NET_TIMING
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,C2,primitive,capacitor,,,A,NET_CONTROL
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,C2,primitive,capacitor,,,B,NET_GND
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,R1,primitive,resistor,1000,ohmic,A,NET_VCC
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,R1,primitive,resistor,1000,ohmic,B,NET_DISCH
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,D2,primitive,diode,,,ANODE,NET_DISCH
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,D2,primitive,diode,,,CATHODE,NET_PWM_CTRL
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,D3,primitive,diode,,,ANODE,NET_PWM_CTRL
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,D3,primitive,diode,,,CATHODE,NET_DISCH
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,RV1,primitive,potentiometer,10000,ohmic,A,NET_PWM_CTRL
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,RV1,primitive,potentiometer,10000,ohmic,WIPER,NET_TIMING
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,RV1,primitive,potentiometer,10000,ohmic,B,NET_PWM_CTRL
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,C1,primitive,capacitor,,,A,NET_TIMING
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,C1,primitive,capacitor,,,B,NET_GND
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,R2,primitive,resistor,470,ohmic,A,NET_OUT
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,R2,primitive,resistor,470,ohmic,B,NET_R2_B_TO_D1_ANODE
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,D1,primitive,led,,,ANODE,NET_R2_B_TO_D1_ANODE
+555_pwm_generator_dual_diode_trim,555 pwm generator dual diode trim,D1,primitive,led,,,CATHODE,NET_GND
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,V1,source,voltage,9,v,POS,NET_VCC
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,V1,source,voltage,9,v,NEG,NET_GND
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,U1,block,555_timer,,,VCC,NET_VCC
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,U1,block,555_timer,,,GND,NET_GND
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,U1,block,555_timer,,,RESET,NET_VCC
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,U1,block,555_timer,,,OUT,NET_OUT
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,U1,block,555_timer,,,CTRL,NET_CONTROL
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,U1,block,555_timer,,,TRIG,NET_TRIGGER
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,U1,block,555_timer,,,THRESH,NET_TIMING
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,U1,block,555_timer,,,DISCH,NET_TIMING
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,R1,primitive,resistor,100000,ohmic,A,NET_VCC
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,R1,primitive,resistor,100000,ohmic,B,NET_TRIGGER
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,SW1,primitive,switch,,,A,NET_TRIGGER
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,SW1,primitive,switch,,,B,NET_GND
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,R2,primitive,resistor,40000,ohmic,A,NET_VCC
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,R2,primitive,resistor,40000,ohmic,B,NET_TIMING
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,C1,primitive,capacitor,100,uf,A,NET_TIMING
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,C1,primitive,capacitor,100,uf,B,NET_GND
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,C2,primitive,capacitor,100,nf,A,NET_CONTROL
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,C2,primitive,capacitor,100,nf,B,NET_GND
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,R3,primitive,resistor,470,ohmic,A,NET_OUT
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,R3,primitive,resistor,470,ohmic,B,NET_R3_B_TO_D1_ANODE
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,D1,primitive,led,,,ANODE,NET_R3_B_TO_D1_ANODE
+555_monostable_one_shot_pushbutton,555 monostable one shot pushbutton,D1,primitive,led,,,CATHODE,NET_GND
+555_light_level_comparator_dual_led,555 light level comparator dual led,V1,source,voltage,9,v,POS,NET_VCC
+555_light_level_comparator_dual_led,555 light level comparator dual led,V1,source,voltage,9,v,NEG,NET_GND
+555_light_level_comparator_dual_led,555 light level comparator dual led,U1,block,555_timer,,,VCC,NET_VCC
+555_light_level_comparator_dual_led,555 light level comparator dual led,U1,block,555_timer,,,GND,NET_GND
+555_light_level_comparator_dual_led,555 light level comparator dual led,U1,block,555_timer,,,RESET,NET_VCC
+555_light_level_comparator_dual_led,555 light level comparator dual led,U1,block,555_timer,,,CTRL,NET_CONTROL
+555_light_level_comparator_dual_led,555 light level comparator dual led,U1,block,555_timer,,,OUT,NET_OUT
+555_light_level_comparator_dual_led,555 light level comparator dual led,U1,block,555_timer,,,THRESH,NET_DIV_MID_HIGH
+555_light_level_comparator_dual_led,555 light level comparator dual led,U1,block,555_timer,,,TRIG,NET_DIV_MID_LOW
+555_light_level_comparator_dual_led,555 light level comparator dual led,C1,primitive,capacitor,10,nf,A,NET_CONTROL
+555_light_level_comparator_dual_led,555 light level comparator dual led,C1,primitive,capacitor,10,nf,B,NET_GND
+555_light_level_comparator_dual_led,555 light level comparator dual led,R1,primitive,resistor,,,A,NET_VCC
+555_light_level_comparator_dual_led,555 light level comparator dual led,R1,primitive,resistor,,,B,NET_DIV_MID_HIGH
+555_light_level_comparator_dual_led,555 light level comparator dual led,R3,primitive,resistor,1000,ohmic,A,NET_DIV_MID_HIGH
+555_light_level_comparator_dual_led,555 light level comparator dual led,R3,primitive,resistor,1000,ohmic,B,NET_DIV_MID_LOW
+555_light_level_comparator_dual_led,555 light level comparator dual led,R2,primitive,resistor,,,A,NET_DIV_MID_LOW
+555_light_level_comparator_dual_led,555 light level comparator dual led,R2,primitive,resistor,,,B,NET_GND
+555_light_level_comparator_dual_led,555 light level comparator dual led,R4,primitive,resistor,470,ohmic,A,NET_VCC
+555_light_level_comparator_dual_led,555 light level comparator dual led,R4,primitive,resistor,470,ohmic,B,NET_R4_B_TO_D1_ANODE
+555_light_level_comparator_dual_led,555 light level comparator dual led,D1,primitive,led,,,ANODE,NET_R4_B_TO_D1_ANODE
+555_light_level_comparator_dual_led,555 light level comparator dual led,D1,primitive,led,,,CATHODE,NET_OUT
+555_light_level_comparator_dual_led,555 light level comparator dual led,R5,primitive,resistor,470,ohmic,A,NET_OUT
+555_light_level_comparator_dual_led,555 light level comparator dual led,R5,primitive,resistor,470,ohmic,B,NET_R5_B_TO_D2_ANODE
+555_light_level_comparator_dual_led,555 light level comparator dual led,D2,primitive,led,,,ANODE,NET_R5_B_TO_D2_ANODE
+555_light_level_comparator_dual_led,555 light level comparator dual led,D2,primitive,led,,,CATHODE,NET_GND
+555_astable_oscillator_led_output,555 astable oscillator led output,V1,source,voltage,9,v,POS,NET_VCC
+555_astable_oscillator_led_output,555 astable oscillator led output,V1,source,voltage,9,v,NEG,NET_GND
+555_astable_oscillator_led_output,555 astable oscillator led output,U1,block,555_timer,,,VCC,NET_VCC
+555_astable_oscillator_led_output,555 astable oscillator led output,U1,block,555_timer,,,GND,NET_GND
+555_astable_oscillator_led_output,555 astable oscillator led output,U1,block,555_timer,,,RESET,NET_VCC
+555_astable_oscillator_led_output,555 astable oscillator led output,U1,block,555_timer,,,DISCH,NET_DISCH
+555_astable_oscillator_led_output,555 astable oscillator led output,U1,block,555_timer,,,THRESH,NET_TIMING
+555_astable_oscillator_led_output,555 astable oscillator led output,U1,block,555_timer,,,TRIG,NET_TIMING
+555_astable_oscillator_led_output,555 astable oscillator led output,U1,block,555_timer,,,CTRL,NET_CONTROL
+555_astable_oscillator_led_output,555 astable oscillator led output,U1,block,555_timer,,,OUT,NET_OUT
+555_astable_oscillator_led_output,555 astable oscillator led output,R1,primitive,resistor,1000,ohmic,A,NET_VCC
+555_astable_oscillator_led_output,555 astable oscillator led output,R1,primitive,resistor,1000,ohmic,B,NET_DISCH
+555_astable_oscillator_led_output,555 astable oscillator led output,R2,primitive,resistor,1000,ohmic,A,NET_DISCH
+555_astable_oscillator_led_output,555 astable oscillator led output,R2,primitive,resistor,1000,ohmic,B,NET_TIMING
+555_astable_oscillator_led_output,555 astable oscillator led output,C2,primitive,capacitor,220,nf,A,NET_TIMING
+555_astable_oscillator_led_output,555 astable oscillator led output,C2,primitive,capacitor,220,nf,B,NET_GND
+555_astable_oscillator_led_output,555 astable oscillator led output,C1,primitive,capacitor,1,uf,A,NET_CONTROL
+555_astable_oscillator_led_output,555 astable oscillator led output,C1,primitive,capacitor,1,uf,B,NET_GND
+555_astable_oscillator_led_output,555 astable oscillator led output,R3,primitive,resistor,470,ohmic,A,NET_OUT
+555_astable_oscillator_led_output,555 astable oscillator led output,R3,primitive,resistor,470,ohmic,B,NET_R3_B_TO_D1_ANODE
+555_astable_oscillator_led_output,555 astable oscillator led output,D1,primitive,led,,,ANODE,NET_R3_B_TO_D1_ANODE
+555_astable_oscillator_led_output,555 astable oscillator led output,D1,primitive,led,,,CATHODE,NET_GND
