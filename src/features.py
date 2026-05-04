@@ -80,7 +80,19 @@ TARGET_COLUMN = "next_component_type"
 
 def get_available_feature_columns(df: pd.DataFrame) -> Dict[str, List[str]]:
     """
-    Return feature columns that are actually present in the DataFrame.
+    Purpose:
+        Intersect the canonical feature lists with whatever columns exist in `df`.
+
+    Design:
+        Three buckets (categorical / numeric / boolean) mirror how
+        `build_feature_matrix` assembles `X`.
+
+    Workflow:
+        Always called inside `build_feature_matrix` before encoding.
+
+    Data handoff:
+        Inputs: any circuit DataFrame (partial columns allowed for summaries).
+        Outputs: dict of column names; consumed only by `build_feature_matrix`.
     """
     return {
         "categorical": [col for col in CATEGORICAL_FEATURES if col in df.columns],
@@ -91,7 +103,19 @@ def get_available_feature_columns(df: pd.DataFrame) -> Dict[str, List[str]]:
 
 def get_dataset_summary(df: pd.DataFrame) -> Dict[str, object]:
     """
-    Return a compact summary of the circuit dataset.
+    Purpose:
+        Produce JSON-serializable stats for UI dashboards and smoke tests.
+
+    Design:
+        Counts uniques on key identity columns; converts numpy/pandas scalars
+        to plain Python ints/strings for stable serialization.
+
+    Workflow:
+        Optional diagnostics; not on the hot training path.
+
+    Data handoff:
+        Inputs: minimally the required summary columns on `df`.
+        Outputs: dict for Streamlit/tests; no writes to disk.
     """
     required_columns = [
         "circuit_name",
@@ -122,7 +146,19 @@ def get_dataset_summary(df: pd.DataFrame) -> Dict[str, object]:
 
 def get_sample_rows(df: pd.DataFrame, n: int = 5) -> List[Dict[str, object]]:
     """
-    Return the first n circuit rows as a list of dictionaries.
+    Purpose:
+        Surface a small, human-readable slice of the dataset for previews.
+
+    Design:
+        Inserts a 1-based `index` column for display; uses `orient="records"`
+        so each row becomes one dict (common JSON shape).
+
+    Workflow:
+        UI tables / quick REPL inspection.
+
+    Data handoff:
+        Inputs: `df`, row cap `n`.
+        Outputs: `List[dict]`; not fed back into training automatically.
     """
     sample = df.head(n).copy()
     sample.insert(0, "index", range(1, len(sample) + 1))
@@ -136,10 +172,23 @@ def build_feature_matrix(
     encoder: OneHotEncoder | None = None,
 ) -> Tuple[pd.DataFrame, OneHotEncoder]:
     """
-    Build an encoded feature matrix from the circuit dataset.
+    Purpose:
+        Turn preprocessed tabular rows into a numeric-only design matrix `X`.
 
-    Categorical fields are one-hot encoded.
-    Numeric and boolean fields are passed through.
+    Design:
+        sklearn `OneHotEncoder` on categoricals; numeric coerced with
+        `errors="coerce"`; booleans mapped to 0/1. Concatenation order is
+        numeric, boolean, then one-hot blocks (stable for `feature_columns`).
+
+    Workflow:
+        Training: `fit_encoder=True` then persist encoder. Inference: reuse
+        the fitted encoder with `fit_encoder=False`.
+
+    Data handoff:
+        Inputs: `df` from `preprocess` (or `predict.prepare_prediction_dataframe`).
+        Outputs: `(X_encoded, encoder)`; `X_encoded` aligns with
+        `train.split_data` / `predict.align_feature_columns`; `encoder` saved
+        beside the model in `train.save_artifacts`.
     """
     available = get_available_feature_columns(df)
 
@@ -165,6 +214,7 @@ def build_feature_matrix(
         boolean_data = df[boolean_features].fillna(False).astype(int)
 
     if fit_encoder:
+        # handle_unknown="ignore": unseen categories at inference become all-zero.
         encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
         encoded_array = encoder.fit_transform(categorical_data)
     else:
@@ -180,6 +230,7 @@ def build_feature_matrix(
         index=df.index,
     )
 
+    # reset_index(drop=True): concat aligns row-by-row after possible reindex drift.
     X_encoded = pd.concat(
         [
             numeric_data.reset_index(drop=True),
@@ -197,7 +248,18 @@ def get_target_labels(
     target_column: str = TARGET_COLUMN,
 ) -> pd.Series:
     """
-    Return target labels for training.
+    Purpose:
+        Extract the supervised label vector aligned with `build_feature_matrix` rows.
+
+    Design:
+        Fills missing labels with `"end"` so sklearn always sees strings.
+
+    Workflow:
+        Called by `train.train_model` immediately after building `X_encoded`.
+
+    Data handoff:
+        Inputs: labeled `df` from preprocessing (`next_component_type` present).
+        Outputs: `y` Series passed to `preprocess.split_data` / `model.fit`.
     """
     if target_column not in df.columns:
         raise ValueError(
@@ -210,7 +272,18 @@ def get_target_labels(
 
 def get_circuit_component_counts(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Return component counts by circuit and component_type.
+    Purpose:
+        Aggregate how many connection rows each component type contributes per circuit.
+
+    Design:
+        Uses `groupby(...).size()` (row counts), not distinct ref_des counts.
+
+    Workflow:
+        Analytics / UI histograms; orthogonal to model `X`.
+
+    Data handoff:
+        Inputs: preprocessed `df` with `circuit_name` and `component_type`.
+        Outputs: small summary DataFrame for reporting consumers.
     """
     return (
         df.groupby(["circuit_name", "component_type"])
@@ -222,7 +295,18 @@ def get_circuit_component_counts(df: pd.DataFrame) -> pd.DataFrame:
 
 def get_net_connection_counts(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Return net usage counts by circuit.
+    Purpose:
+        Count pin connections attached to each net within each circuit.
+
+    Design:
+        Sorted output for deterministic display in tests/UI.
+
+    Workflow:
+        Reporting only.
+
+    Data handoff:
+        Inputs: `df` with `circuit_name`, `net_name`.
+        Outputs: per-(circuit, net) connection totals.
     """
     return (
         df.groupby(["circuit_name", "net_name"])
@@ -234,7 +318,18 @@ def get_net_connection_counts(df: pd.DataFrame) -> pd.DataFrame:
 
 def get_component_kind_counts(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Return component-kind counts by circuit.
+    Purpose:
+        Count rows per `component_kind` within each circuit for inventory views.
+
+    Design:
+        Mirrors `get_circuit_component_counts` but groups on `component_kind`.
+
+    Workflow:
+        Reporting / UI side panels.
+
+    Data handoff:
+        Inputs: `df` with `circuit_name`, `component_kind`.
+        Outputs: sorted aggregate DataFrame.
     """
     return (
         df.groupby(["circuit_name", "component_kind"])

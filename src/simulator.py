@@ -23,10 +23,19 @@ from .graph import CircuitGraph, normalize_net_name
 
 def tick_sim(graph: CircuitGraph) -> Dict[str, List[str]]:
     """
-    Run one lightweight validation pass over the circuit graph.
+    Purpose:
+        Aggregate lightweight connectivity checks into UI-friendly messages.
 
-    Returns:
-        Dictionary of warnings/errors for UI display.
+    Design:
+        Mutates no graph topology; only reads `CircuitGraph` and accumulates
+        strings plus a coarse `graph_state` label.
+
+    Workflow:
+        Called on timer or after edits in the Streamlit graph UI.
+
+    Data handoff:
+        Inputs: live `CircuitGraph` instance.
+        Outputs: dict with keys `graph_state`, `warnings`, `errors` (string lists).
     """
 
     warnings: List[str] = []
@@ -56,7 +65,18 @@ def validate_missing_connections(
     errors: List[str],
 ) -> None:
     """
-    Check for nodes without pin-to-net assignments.
+    Purpose:
+        Warn when a placed component has no edges (floating part).
+
+    Design:
+        Builds a set of refs that appear on any edge, then subtracts from all
+        `graph.nodes` keys.
+
+    Workflow:
+        First validator inside `tick_sim`.
+
+    Data handoff:
+        Mutates `warnings` in place (append-only); ignores `errors` today.
     """
 
     connected_refs = {ref_des for ref_des, _, _ in graph.edges}
@@ -72,7 +92,18 @@ def validate_power_and_ground(
     errors: List[str],
 ) -> None:
     """
-    Check that the circuit has at least one power net and one ground net.
+    Purpose:
+        Heuristically detect missing supply rails based on net name substrings.
+
+    Design:
+        Simple keyword scan (not a full BOM/netclass analysis); false positives
+        are acceptable for MVP hints.
+
+    Workflow:
+        Second validator inside `tick_sim`.
+
+    Data handoff:
+        Reads `graph.get_nets()`; appends human-readable strings to `warnings`.
     """
 
     nets = graph.get_nets()
@@ -100,9 +131,17 @@ def validate_floating_nets(
     errors: List[str],
 ) -> None:
     """
-    Warn when a net has only one connected pin.
+    Purpose:
+        Flag nets that only connect to a single pin (cannot carry current between parts).
 
-    Single-pin nets may be intentional test points, but they are often mistakes.
+    Design:
+        Uses `get_edges_for_net` length check; informational warning only.
+
+    Workflow:
+        Third validator inside `tick_sim`.
+
+    Data handoff:
+        Appends to `warnings` with contextual ref/pin names for debugging.
     """
 
     for net in graph.get_nets():
@@ -117,7 +156,18 @@ def validate_floating_nets(
 
 def set_role(graph: CircuitGraph, ref_des: str, role: str) -> None:
     """
-    Set functional/electrical role for a component node.
+    Purpose:
+        Annotate a component with a coarse behavioral role for UI and future rules.
+
+    Design:
+        Updates `node.role` and nudges `node.state` out of `UNASSIGNED`/`DRAFT`
+        when a concrete role is chosen.
+
+    Workflow:
+        Role picker widgets in the editor.
+
+    Data handoff:
+        Mutates `Node` in place inside `graph.nodes`; no return value.
     """
 
     node = graph.get_node(ref_des)
@@ -135,7 +185,18 @@ def set_role(graph: CircuitGraph, ref_des: str, role: str) -> None:
 
 def mark_node_complete(graph: CircuitGraph, ref_des: str) -> None:
     """
-    Mark a component as complete after required pins are assigned.
+    Purpose:
+        Transition a node's `state` to `COMPLETE` when all declared pins are wired.
+
+    Design:
+        Compares `node.pins` names against pins present on outgoing edges for
+        the same `ref_des`; if pins list empty, never marks complete.
+
+    Workflow:
+        After edge edits or auto-router completion hooks.
+
+    Data handoff:
+        Reads `graph.edges` and mutates matching `Node.state`.
     """
 
     node = graph.get_node(ref_des)
@@ -163,10 +224,18 @@ def mark_prediction_accepted(
     predicted_component_type: str,
 ) -> None:
     """
-    Mark a prediction as accepted for future validation/reinforcement logging.
+    Purpose:
+        Persist user confirmation that the ML suggestion was correct.
 
-    This does not retrain the model directly.
-    It only records user validation intent on the node.
+    Design:
+        Writes into `node.properties` bag and sets `state="VALIDATED"`; no
+        training loop is triggered here (future data pipeline hook).
+
+    Workflow:
+        UI "accept prediction" button handler.
+
+    Data handoff:
+        Mutates `Node.properties` for later export to DB or labeling jobs.
     """
 
     node = graph.get_node(ref_des)
@@ -185,7 +254,18 @@ def mark_prediction_rejected(
     predicted_component_type: str,
 ) -> None:
     """
-    Mark a prediction as rejected for future validation/reinforcement logging.
+    Purpose:
+        Record that the user disagreed with the model's suggested component type.
+
+    Design:
+        Sets `prediction_accepted=False` and moves node to `REVIEW` state for
+        visibility in UI queues.
+
+    Workflow:
+        UI "reject prediction" path paired with manual correction flows.
+
+    Data handoff:
+        Same `node.properties` contract as `mark_prediction_accepted`.
     """
 
     node = graph.get_node(ref_des)

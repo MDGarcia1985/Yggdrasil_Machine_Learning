@@ -51,20 +51,20 @@ def train_model(
     n_estimators: int = 200,
 ) -> Dict[str, Any]:
     """
-    Train a RandomForest model on the circuit dataset.
+    Purpose:
+        Fit the baseline RandomForest on encoded circuit rows and report quality.
 
-    Args:
-        csv_path:
-            Path or list of paths to raw circuit CSV files.
-        test_size:
-            Fraction of data reserved for test set.
-        random_state:
-            Reproducibility seed.
-        n_estimators:
-            Number of trees in the forest.
+    Design:
+        End-to-end orchestration: preprocess → one-hot → random holdout split
+        (via `split_data`, `stratify=None`) → balanced forest → metrics + importances.
 
-    Returns:
-        Dictionary containing trained artifacts and evaluation results.
+    Workflow:
+        Primary training entry; `main()` calls this then `save_artifacts`.
+
+    Data handoff:
+        Inputs: raw CSV path(s) (`preprocess.load_preprocessed_dataframe`).
+        Outputs: dict with `model`, `encoder`, `feature_columns`, holdout
+        predictions, and report payloads for `save_artifacts` and tests.
     """
     df = load_preprocessed_dataframe(csv_path)
 
@@ -81,7 +81,7 @@ def train_model(
     model = RandomForestClassifier(
         n_estimators=n_estimators,
         random_state=random_state,
-        n_jobs=-1,
+        n_jobs=-1,  # use all CPU cores for tree fitting
         class_weight="balanced_subsample",
     )
 
@@ -90,6 +90,7 @@ def train_model(
     predictions = model.predict(X_test)
     accuracy = accuracy_score(y_test, predictions)
 
+    # zero_division=0: silence warnings when a class has no predicted support.
     report_text = classification_report(
         y_test,
         predictions,
@@ -128,7 +129,20 @@ def train_model(
 
 def save_artifacts(training_result: Dict[str, Any]) -> None:
     """
-    Save trained model artifacts to disk.
+    Purpose:
+        Persist everything `predict.load_artifacts` needs to reproduce training inputs.
+
+    Design:
+        Uses `joblib` for sklearn objects; separate pickle files keep concerns
+        clear (model vs encoder vs column order).
+
+    Workflow:
+        Run after `train_model` in CLI training; CI may skip if read-only.
+
+    Data handoff:
+        Inputs: dict returned by `train_model` (must include model, encoder,
+        feature_columns, and report subfields).
+        Outputs: files under `Models/` consumed by `predict` and `train.load_model`.
     """
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -157,9 +171,19 @@ def load_model(
     feature_columns_path: str | Path = FEATURE_COLUMNS_PATH,
 ) -> Dict[str, Any]:
     """
-    Load saved training artifacts.
+    Purpose:
+        Reload model + encoder + column list from disk without running training.
 
-    This supports predict.py and UI prediction workflows.
+    Design:
+        Thin `joblib.load` trio; paths default to the same constants as save.
+
+    Workflow:
+        Preferred loader for app code that already validated paths; stricter
+        checks live in `predict.load_artifacts`.
+
+    Data handoff:
+        Inputs: filesystem paths.
+        Outputs: dict keys `model`, `encoder`, `feature_columns` for callers.
     """
     return {
         "model": joblib.load(model_path),
@@ -169,6 +193,19 @@ def load_model(
 
 
 def main() -> None:
+    """
+    Purpose:
+        CLI entry: train on default CSVs and write artifacts to `Models/`.
+
+    Design:
+        No arguments; relies on module-level defaults for paths and hyperparams.
+
+    Workflow:
+        `python -m src.train` or equivalent.
+
+    Data handoff:
+        Reads default data paths; writes pickles via `save_artifacts`.
+    """
     training_result = train_model()
     save_artifacts(training_result)
 

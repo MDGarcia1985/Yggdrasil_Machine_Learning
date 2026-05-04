@@ -39,29 +39,23 @@ ImportanceList = List[Tuple[str, float]]
 
 def tree_model_importance(features: Iterable[str], model) -> ImportanceList:
     """
-    Report feature importance from tree-based models.
+    Purpose:
+        Read sklearn's native Gini-based importances for tree ensembles.
 
-    Works with:
-    - DecisionTreeClassifier
-    - RandomForestClassifier
-    - ExtraTreesClassifier
-    - other sklearn models exposing feature_importances_
+    Design:
+        Sorts descending so callers can slice `[:top_n]` without re-sorting.
 
-    Args:
-        features:
-            Ordered feature column names.
-        model:
-            Fitted tree-based model.
+    Workflow:
+        Invoked from `get_model_importance` when `feature_importances_` exists.
 
-    Returns:
-        List of (feature_name, importance_score), sorted highest first.
-
-    Workflow role:
-        Called by `get_model_importance()` during training reports and tests.
+    Data handoff:
+        Inputs: parallel `features` names and fitted tree `model`.
+        Outputs: `List[Tuple[str, float]]` for `format_importance_text` / UI.
     """
     if not hasattr(model, "feature_importances_"):
         raise ValueError("Model does not expose feature_importances_.")
 
+    # key=lambda x: -x[1]: descending sort by importance score.
     return sorted(
         zip(list(features), model.feature_importances_),
         key=lambda x: -x[1],
@@ -70,21 +64,36 @@ def tree_model_importance(features: Iterable[str], model) -> ImportanceList:
 
 def decision_tree_importance(features: Iterable[str], decision_tree_model) -> ImportanceList:
     """
-    Backward-compatible alias for tree_model_importance().
+    Purpose:
+        Preserve older call sites that referenced decision trees explicitly.
+
+    Design:
+        Pure alias to `tree_model_importance` (no extra logic).
+
+    Workflow:
+        Legacy scripts/tests importing this name.
+
+    Data handoff:
+        Same as `tree_model_importance`.
     """
     return tree_model_importance(features, decision_tree_model)
 
 
 def linear_model_importance(features: Iterable[str], model) -> ImportanceList:
     """
-    Estimate importance for linear models using coefficient magnitude.
+    Purpose:
+        Derive a per-feature score from linear model weights when trees are absent.
 
-    Works with:
-    - LogisticRegression
-    - LinearSVC-style models exposing coef_
+    Design:
+        Uses `abs(coef)`; multiclass models average across classes so each
+        feature gets one scalar (shape `(n_features,)`, not per-class).
 
-    For multiclass classifiers, this averages absolute coefficient magnitude
-    across classes.
+    Workflow:
+        Second branch inside `get_model_importance`.
+
+    Data handoff:
+        Inputs: feature names iterable, fitted linear classifier `model`.
+        Outputs: sorted `(name, score)` tuples like tree path.
     """
     if not hasattr(model, "coef_"):
         raise ValueError("Model does not expose coef_.")
@@ -94,7 +103,7 @@ def linear_model_importance(features: Iterable[str], model) -> ImportanceList:
     if len(coef.shape) == 1:
         scores = abs(coef)
     else:
-        # For multiclass models, average absolute effect size per feature.
+        # coef_ shape (n_classes, n_features): collapse to one score per column.
         scores = abs(coef).mean(axis=0)
 
     return sorted(
@@ -112,14 +121,19 @@ def permutation_model_importance(
     random_state: int = 42,
 ) -> ImportanceList:
     """
-    Estimate feature importance with permutation importance.
+    Purpose:
+        Score features by how much shuffling each column hurts test accuracy.
 
-    This is useful for models that do not expose built-in importance scores,
-    such as KNN.
+    Design:
+        Wraps `sklearn.inspection.permutation_importance`; cost grows with
+        `n_repeats * n_features`.
 
-    Design note:
-        Permutation importance is slower but model-agnostic, so it is the
-        fallback path when no native importance attribute is available.
+    Workflow:
+        Fallback from `get_model_importance` when no native coef_/importances.
+
+    Data handoff:
+        Inputs: feature names (for zipping), fitted `model`, holdout `X_test`/`y_test`.
+        Outputs: sorted mean importance per feature.
     """
     result = permutation_importance(
         model,
@@ -137,7 +151,17 @@ def permutation_model_importance(
 
 def knn_importance(features, knn_model, X_test, y_test) -> ImportanceList:
     """
-    Backward-compatible KNN importance helper.
+    Purpose:
+        Expose permutation importance under a KNN-specific name for old examples.
+
+    Design:
+        Delegates entirely to `permutation_model_importance`.
+
+    Workflow:
+        Legacy comparisons where KNN has no `feature_importances_`.
+
+    Data handoff:
+        Same as `permutation_model_importance`.
     """
     return permutation_model_importance(features, knn_model, X_test, y_test)
 
@@ -149,15 +173,21 @@ def get_model_importance(
     y_test=None,
 ) -> ImportanceList:
     """
-    Choose the best available importance method for the supplied model.
+    Purpose:
+        Single entry point for "how important is each column?" across estimators.
 
-    Priority:
-    1. Tree-native importance
-    2. Linear coefficient magnitude
-    3. Permutation importance, if X_test and y_test are supplied
+    Design:
+        Cascading capability checks: trees → linear coef_ → permutation (needs
+        holdout data).
 
-    Workflow role:
-        Training code uses this to keep model explainability logic in one place.
+    Workflow:
+        `train.train_model` calls this for console reporting and saved reports.
+
+    Data handoff:
+        Inputs: training feature column names, fitted `model`, optional test set
+        for permutation fallback.
+        Outputs: `ImportanceList` stored in training artifacts / printed by
+        `print_top_importance`.
     """
     if hasattr(model, "feature_importances_"):
         return tree_model_importance(features, model)
@@ -180,21 +210,19 @@ def format_importance_text(
     as_percent: bool = False,
 ) -> str:
     """
-    Turn feature importance tuples into compact display text.
+    Purpose:
+        Render the top-N importance pairs as one line of text for logs/UI.
 
-    Args:
-        importance_values:
-            List of (feature_name, score).
-        top_n:
-            Number of top features to include.
-        as_percent:
-            If True, format scores as percentages.
+    Design:
+        Joins with `"  |  "` delimiter; optional percent formatting rescales
+        display only (does not renormalize to sum to 100%).
 
-    Returns:
-        Human-readable importance string.
+    Workflow:
+        Any caller needing a string instead of structured tuples.
 
-    Primary use:
-        Console and lightweight UI text output.
+    Data handoff:
+        Inputs: `ImportanceList` from `get_model_importance`.
+        Outputs: single formatted `str` (no side effects).
     """
     selected = importance_values[:top_n]
 
@@ -215,10 +243,18 @@ def print_top_importance(
     top_n: int = 15,
 ) -> None:
     """
-    Print top feature importances in a readable console format.
+    Purpose:
+        Emit human-readable importance lines to stdout during training.
 
-    Primary use:
-        Training CLI output (`train.train_model`).
+    Design:
+        One `print` per feature to avoid huge single strings on large models.
+
+    Workflow:
+        Invoked at the end of `train.train_model` for operator feedback.
+
+    Data handoff:
+        Inputs: sorted `ImportanceList` (highest scores first).
+        Outputs: console only; returns `None`.
     """
     print(f"\nTop {top_n} Feature Importances:")
 

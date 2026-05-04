@@ -20,10 +20,17 @@ from typing import List, Tuple
 
 def init_default_edges() -> List[Tuple[str, str, str]]:
     """
-    Sample pin-to-net connections for the default circuit graph.
+    Purpose:
+        Supply canonical pin→net wiring parallel to `init_default_nodes`.
 
-    Represents:
-    V1 -> RC input conditioning -> Schmitt trigger -> transistor/load stage
+    Design:
+        Tuple order `(ref_des, pin_name, net_name)` matches `graph.PinNetEdge`.
+
+    Workflow:
+        Loaded alongside default nodes when the UI opens the sample design.
+
+    Data handoff:
+        Assigned to `CircuitGraph.edges`; combined with nodes in `to_rows()` for ML.
     """
 
     return [

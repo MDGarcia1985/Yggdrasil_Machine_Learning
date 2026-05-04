@@ -75,6 +75,22 @@ from typing import Dict, Any, List
 
 @dataclass
 class Pin:
+    """
+    Purpose:
+        Describe one logical pin on a schematic symbol (name + semantic hints).
+
+    Design:
+        `net` may be empty in the editor until wired; `role` guides UI coloring
+        and future rule checks.
+
+    Workflow:
+        Lives inside `Node.pins`; connectivity for ML rows still comes from
+        `CircuitGraph.edges`, not this field alone.
+
+    Data handoff:
+        Serialized with parent `Node`; optional mirror of connectivity for UX.
+    """
+
     name: str
     role: str = "UNASSIGNED"   # INPUT, OUTPUT, POWER, GROUND, PASSIVE
     net: str = ""              # NET_VIN, NET_GND, etc.
@@ -83,7 +99,18 @@ class Pin:
 @dataclass
 class Node:
     """
-    Circuit graph node representing a component.
+    Purpose:
+        Represent one component instance with identity, value, pins, and UI state.
+
+    Design:
+        Dataclass keeps the shape explicit for JSON round-trips; `properties`
+        holds extensible ML/UI flags without schema churn.
+
+    Workflow:
+        Instantiated by editors/importers, stored in `CircuitGraph.nodes`.
+
+    Data handoff:
+        Joined with edges in `graph.CircuitGraph.to_rows` to emit CSV/ML dicts.
     """
 
     # Identity
@@ -113,8 +140,17 @@ class Node:
 
 def init_default_nodes() -> Dict[str, Node]:
     """
-    Sample circuit nodes for ML and UI testing.
-    Represents a simple signal conditioning + output stage.
+    Purpose:
+        Provide a deterministic toy circuit graph for demos and unit tests.
+
+    Design:
+        Returns a dict keyed by uppercase `ref_des` to match `CircuitGraph` lookups.
+
+    Workflow:
+        `CircuitGraph.load_default` / `reset` seeds from this factory.
+
+    Data handoff:
+        Outputs `Dict[str, Node]` consumed directly by `CircuitGraph.nodes`.
     """
 
     return {

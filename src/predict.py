@@ -61,10 +61,20 @@ def load_artifacts(
     feature_columns_path: str | Path = FEATURE_COLUMNS_PATH,
 ) -> Dict[str, Any]:
     """
-    Load model artifacts saved by train.py.
+    Purpose:
+        Load pickles produced by training, with explicit missing-file errors.
 
-    Returns:
-        Dictionary containing model, encoder, and feature_columns.
+    Design:
+        Pre-checks all three paths so the user gets one combined error list
+        instead of failing on the first missing file.
+
+    Workflow:
+        Every prediction API (`predict_record`, `predict_dataframe`) starts here.
+
+    Data handoff:
+        Inputs: paths on disk (defaults under `Models/`).
+        Outputs: dict with `model`, `encoder`, `feature_columns` for encoding
+        and alignment steps.
     """
     model_path = Path(model_path)
     encoder_path = Path(encoder_path)
@@ -91,10 +101,20 @@ def load_artifacts(
 
 def prepare_prediction_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Prepare unlabeled prediction data.
+    Purpose:
+        Run the same cleaning + engineering steps as training, without labels.
 
-    Unlike preprocess_dataframe(), this does NOT create next_component_type,
-    because prediction input does not have a known next label.
+    Design:
+        Skips `add_next_component_label` because inference has no ground-truth
+        "next" type to supervise against.
+
+    Workflow:
+        Internal bridge between raw UI/API rows and `build_feature_matrix`.
+
+    Data handoff:
+        Inputs: DataFrame with `RAW_REQUIRED_COLUMNS` populated.
+        Outputs: engineered table; passed to `features.build_feature_matrix` with
+        the saved `OneHotEncoder`.
     """
     missing = [col for col in RAW_REQUIRED_COLUMNS if col not in df.columns]
     if missing:
@@ -113,7 +133,19 @@ def align_feature_columns(
     feature_columns: List[str],
 ) -> pd.DataFrame:
     """
-    Align encoded prediction features to the training feature order.
+    Purpose:
+        Guarantee prediction matrices match the exact column order from training.
+
+    Design:
+        Missing columns (e.g. unseen categorical levels dropped by encoder) are
+        zero-filled; final reindex drops any extra columns not in training.
+
+    Workflow:
+        After `build_feature_matrix`, before `model.predict`.
+
+    Data handoff:
+        Inputs: freshly encoded `X_encoded`, training's `feature_columns` list.
+        Outputs: DataFrame ready for sklearn `predict` / `predict_proba`.
     """
     aligned = X_encoded.copy()
 
@@ -121,6 +153,7 @@ def align_feature_columns(
         if col not in aligned.columns:
             aligned[col] = 0
 
+    # Column order must match training or tree models read wrong features.
     return aligned[feature_columns]
 
 
@@ -131,14 +164,20 @@ def predict_record(
     feature_columns_path: str | Path = FEATURE_COLUMNS_PATH,
 ) -> Dict[str, Any]:
     """
-    Predict next_component_type from a single feature dictionary.
+    Purpose:
+        Score one connection row (dict) and return label + optional probabilities.
 
-    Args:
-        feature_values:
-            Single circuit connection row as a dictionary.
+    Design:
+        Wraps single-row DataFrame construction so the batching code path stays
+        identical to `predict_dataframe`.
 
-    Returns:
-        Dictionary with prediction, probabilities, confidence, and feature columns.
+    Workflow:
+        UI quick-preview, unit tests, REPL demos.
+
+    Data handoff:
+        Inputs: `feature_values` matching raw CSV schema; artifact paths.
+        Outputs: dict with `prediction`, `probabilities`, `confidence`, echo of
+        `feature_columns` and raw `input_row` for auditing.
     """
     artifact = load_artifacts(model_path, encoder_path, feature_columns_path)
 
@@ -163,6 +202,7 @@ def predict_record(
 
     if hasattr(model, "predict_proba"):
         class_probs = model.predict_proba(X_encoded)[0]
+        # classes_: label order matches columns of predict_proba output.
         probabilities = {
             str(label): float(prob)
             for label, prob in zip(model.classes_, class_probs)
@@ -185,7 +225,19 @@ def predict_dataframe(
     feature_columns_path: str | Path = FEATURE_COLUMNS_PATH,
 ) -> pd.DataFrame:
     """
-    Predict next_component_type for every row in a DataFrame.
+    Purpose:
+        Batch scoring for many rows while preserving engineered feature columns.
+
+    Design:
+        Appends `predicted_next_component_type` and `prediction_confidence`
+        (max class probability) to the prepared (engineered) frame, not the raw input.
+
+    Workflow:
+        Offline evaluation on unlabeled exports or UI batch runs.
+
+    Data handoff:
+        Inputs: DataFrame with raw required columns (see `RAW_REQUIRED_COLUMNS`).
+        Outputs: copy of prepared rows plus prediction columns for CSV/UI.
     """
     artifact = load_artifacts(model_path, encoder_path, feature_columns_path)
 
@@ -218,14 +270,36 @@ def predict_dataframe(
 
 def predict_model(model, X_test):
     """
-    Predict labels from an already-loaded model and test feature matrix.
+    Purpose:
+        Thin wrapper so tests and notebooks can call `.predict` via one import.
+
+    Design:
+        No alignment or encoding—caller must supply already-encoded `X_test`.
+
+    Workflow:
+        Used after manual matrix construction in tests.
+
+    Data handoff:
+        Inputs: fitted sklearn estimator, feature matrix.
+        Outputs: ndarray/Series of predicted class labels.
     """
     return model.predict(X_test)
 
 
 def evaluate_predictions(predictions, y_test) -> List[Dict[str, object]]:
     """
-    Format predictions against known labels for testing/reporting.
+    Purpose:
+        Build a per-row correctness table for human-readable test output.
+
+    Design:
+        Zips iterables positionally—callers must ensure equal lengths.
+
+    Workflow:
+        Test harnesses comparing `model.predict` outputs to held-out labels.
+
+    Data handoff:
+        Inputs: parallel sequences `predictions`, `y_test`.
+        Outputs: list of dict rows with 1-based `index` for display.
     """
     results = []
 
@@ -246,7 +320,18 @@ def evaluate_predictions(predictions, y_test) -> List[Dict[str, object]]:
 
 def model_accuracy(predictions, y_test) -> float:
     """
-    Return simple accuracy score.
+    Purpose:
+        Compute plain accuracy without importing sklearn metrics.
+
+    Design:
+        Uses elementwise equality with sum; empty inputs return 0.0.
+
+    Workflow:
+        Lightweight checks in tests or UI summaries.
+
+    Data handoff:
+        Inputs: parallel `predictions` and `y_test` (often numpy arrays).
+        Outputs: scalar float in [0, 1].
     """
     total_predictions = int(len(y_test))
 
@@ -260,7 +345,17 @@ def model_accuracy(predictions, y_test) -> float:
 
 def main():
     """
-    Manual smoke test. Requires trained artifacts.
+    Purpose:
+        Quick CLI smoke test verifying artifacts load and a row scores.
+
+    Design:
+        Hard-coded example dict mimics one training CSV row shape.
+
+    Workflow:
+        Run module as script after training locally.
+
+    Data handoff:
+        Reads default `Models/` pickles; prints `predict_record` dict to stdout.
     """
     example = {
         "circuit_name": "button_debounce",
