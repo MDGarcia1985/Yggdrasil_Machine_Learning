@@ -1,5 +1,11 @@
 """
 Node styling functions (color, shape, label logic) for circuit graph UI.
+
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
 """
 
 from src.nodes import Node

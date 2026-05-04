@@ -1,6 +1,12 @@
 ﻿"""
 Run the app through the current project workflow.
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 Workflow:
 1. Execute `main.py` so training artifacts are refreshed.
 2. Launch the Streamlit app.

@@ -1,6 +1,12 @@
 """
 Graph container that ties circuit nodes + pin-to-net edges together.
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 NetworkX / GNN ready.
 
 Circuit rule:

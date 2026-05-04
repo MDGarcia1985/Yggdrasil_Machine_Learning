@@ -1,6 +1,12 @@
 """
 Circuit graph validation / lightweight simulation helpers.
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 This is NOT SPICE.
 
 Purpose:

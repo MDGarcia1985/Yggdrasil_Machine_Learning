@@ -1,6 +1,12 @@
 """
 Edges/connections for the circuit graph.
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 Circuit rule:
 Wires do not connect node-to-node directly.
 Wires connect component pins to named nets.

@@ -1,6 +1,12 @@
 """
 main.py
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 Purpose:
 CLI entrypoint for the Yggdrasil circuit classification MVP.
 

@@ -1,6 +1,12 @@
 """
 circuit_builder.py
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 Purpose:
 Streamlit circuit-builder UI for entering circuit-level data and component
 pin-to-net assignments.
@@ -98,6 +104,12 @@ VALUE_TYPES = [
     "Hz",
     "part_number",
 ]
+
+SOURCE_VALUE_TYPES = {
+    "voltage": "V",
+    "current": "A",
+    "signal": "Hz",
+}
 
 PIN_ROLE_OPTIONS = [
     "unknown",
@@ -198,10 +210,30 @@ def _get_pins(component_kind: str, component_type: str, custom_pin_count: int) -
     """
     Return pins for known components or generated custom pin names.
     """
+    normalized_kind = component_kind.strip().lower()
+    normalized_type = component_type.strip().lower()
+
     if component_kind == "Custom":
         return [f"PIN_{i}" for i in range(1, custom_pin_count + 1)]
 
-    return DEFAULT_PINS.get(component_type, ["A", "B"])
+    if normalized_kind == "source":
+        return DEFAULT_PINS[normalized_type]
+
+    return DEFAULT_PINS.get(normalized_type, ["A", "B"])
+
+
+def _get_value_type_options(component_kind: str, component_type: str) -> tuple[List[str], int]:
+    """
+    Return value-type options for the selected component.
+    """
+    normalized_kind = component_kind.strip().lower()
+    normalized_type = component_type.strip().lower()
+
+    if normalized_kind == "source":
+        source_value_type = SOURCE_VALUE_TYPES[normalized_type]
+        return [source_value_type], 0
+
+    return VALUE_TYPES, 0
 
 
 def _render_pin_assignments(pins: List[str]) -> List[PinAssignment]:
@@ -460,7 +492,15 @@ def render_circuit_builder(graph_view: str = "Concept") -> None:
         placeholder="10000, 0.1, NE555, BD64950EFJ-E2...",
     )
 
-    component_value_type = st.selectbox("Component Value Type", VALUE_TYPES)
+    value_type_options, value_type_index = _get_value_type_options(
+        component_kind,
+        component_type,
+    )
+    component_value_type = st.selectbox(
+        "Component Value Type",
+        value_type_options,
+        index=value_type_index,
+    )
 
     component_notes = st.text_area(
         "Component Notes",

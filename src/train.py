@@ -1,6 +1,12 @@
 """
 train.py
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 Purpose:
 Train the baseline classifier for the Yggdrasil circuit dataset.
 

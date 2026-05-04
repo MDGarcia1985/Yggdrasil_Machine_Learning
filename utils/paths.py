@@ -1,6 +1,12 @@
 ﻿"""
 Stable filesystem paths used by scripts and docs-friendly entrypoints.
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 Why this module exists:
     Centralize path definitions so app/test scripts do not rely on the current
     working directory when executed from different shells or IDE actions.

@@ -2,6 +2,12 @@
 """
 Local launcher for the Yggdrasil Circuit ML Streamlit app.
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 Purpose:
 Starts the Streamlit UI from a normal Python command.
 

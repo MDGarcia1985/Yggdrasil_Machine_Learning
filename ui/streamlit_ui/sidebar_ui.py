@@ -1,6 +1,12 @@
 """
 sidebar_ui.py
 
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
+
 Purpose:
 Sidebar controls for the Yggdrasil Streamlit UI.
 
@@ -96,17 +102,18 @@ def _current_circuit_rows() -> list[dict[str, Any]]:
 def _prediction_display_payload(result: dict[str, Any]) -> dict[str, Any]:
     """
     Build the sidebar-friendly prediction summary.
-
-    The model currently predicts the next component type. Until the model
-    returns full component metadata, use MVP defaults for value, pins, and nets.
     """
+    probabilities = result.get("probabilities") or {}
+    confidence = result.get("confidence")
+
+    if confidence is None and probabilities:
+        confidence = max(probabilities.values())
+
     return {
-        "component_type": "Capacitor",
-        "component_value": "0.1",
-        "component_value_type": "µF",
-        "component_pins": ["A", "B"],
-        "nets": ["NET_VIN", "NET_GND"],
-        "confidence": 0.82,
+        "prediction": result.get("prediction", "UNKNOWN"),
+        "confidence": confidence,
+        "probabilities": probabilities,
+        "input_row": result.get("input_row", {}),
         "raw_prediction": result,
     }
 
@@ -115,14 +122,24 @@ def render_prediction_summary(prediction: dict[str, Any]) -> None:
     """
     Render the compact prediction summary requested by the UI.
     """
-    confidence = prediction.get("confidence", 0.0)
+    confidence = prediction.get("confidence")
+    probabilities = prediction.get("probabilities") or {}
 
     st.sidebar.markdown("**Predicted:**")
-    st.sidebar.write(prediction["component_type"])
-    st.sidebar.write(f"{prediction['component_value']} {prediction['component_value_type']}")
-    st.sidebar.write(f"Pins: {', '.join(prediction['component_pins'])}")
-    st.sidebar.write(f"Suggested Nets: {', '.join(prediction['nets'])}")
-    st.sidebar.write(f"Confidence: {confidence:.0%}")
+    st.sidebar.write(prediction.get("prediction", "UNKNOWN"))
+
+    if confidence is not None:
+        st.sidebar.write(f"Confidence: {confidence:.0%}")
+
+    if probabilities:
+        top_predictions = sorted(
+            probabilities.items(),
+            key=lambda item: item[1],
+            reverse=True,
+        )[:3]
+        st.sidebar.write("Top probabilities:")
+        for label, probability in top_predictions:
+            st.sidebar.write(f"{label}: {probability:.0%}")
 
 
 def train_model_from_sidebar() -> None:

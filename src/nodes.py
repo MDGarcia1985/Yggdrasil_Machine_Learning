@@ -1,10 +1,11 @@
 """
 This graph editor is inspired by a project I did for tinyCore, an open source ESP32 based project that seeks to make learning embedded systems more intuitive and fun. I created tinyTrainer to demonstrate how the tinyCore can be used for PLC training.
-Copyright (c) 2026 Michael Garcia
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by the Free
-Software Foundation, either version 3 of the License, or (at your option) any
-later version.
+
+Copyright 2026 M&E Design
+Created by
+Michael Garcia - michael@mandedesign.studio
+Aaron Hurst - https://github.com/hurstaaron
+Joseph Haskins - https://github.com/discreet6247
 """
 
 from dataclasses import dataclass, field

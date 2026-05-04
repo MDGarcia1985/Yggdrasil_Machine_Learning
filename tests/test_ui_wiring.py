@@ -88,7 +88,21 @@ def run_test() -> None:
         main_panel = importlib.import_module("ui.streamlit_ui.main_panel")
         circuit_builder = importlib.import_module("ui.streamlit_ui.circuit_builder")
 
-        prediction = sidebar_ui._prediction_display_payload({"prediction": "resistor"})
+        voltage_pins = circuit_builder._get_pins("Source", "voltage", 0)
+        current_value_types, _ = circuit_builder._get_value_type_options("Source", "current")
+        signal_value_types, _ = circuit_builder._get_value_type_options("Source", "signal")
+        prediction = sidebar_ui._prediction_display_payload(
+            {
+                "prediction": "resistor",
+                "confidence": 0.67,
+                "probabilities": {
+                    "resistor": 0.67,
+                    "capacitor": 0.21,
+                    "diode": 0.12,
+                },
+                "input_row": {"component_type": "voltage"},
+            }
+        )
         sidebar_ui.render_prediction_summary(prediction)
         sidebar_calls = sys.modules["streamlit"].sidebar.calls
 
@@ -115,21 +129,23 @@ def run_test() -> None:
         print(call)
 
     print("\nBasic Consistency Checks:")
-    print(f"Prediction component is Capacitor: {prediction['component_type'] == 'Capacitor'}")
-    print(
-        "Prediction value is 0.1 µF: "
-        f"{prediction['component_value'] == '0.1' and prediction['component_value_type'] == 'µF'}"
-    )
-    print(f"Prediction pins match MVP: {prediction['component_pins'] == ['A', 'B']}")
-    print(f"Prediction nets match MVP: {prediction['nets'] == ['NET_VIN', 'NET_GND']}")
-    print(f"Prediction confidence is 82%: {prediction['confidence'] == 0.82}")
+    print(f"Source voltage pins are POS/NEG: {voltage_pins == ['POS', 'NEG']}")
+    print(f"Source current value type is A: {current_value_types == ['A']}")
+    print(f"Source signal value type is Hz: {signal_value_types == ['Hz']}")
+    print(f"Prediction result passes through: {prediction['prediction'] == 'resistor'}")
+    print(f"Prediction confidence passes through: {prediction['confidence'] == 0.67}")
+    print(f"Prediction probabilities pass through: {prediction['probabilities']['capacitor'] == 0.21}")
 
 
 def test_ui_wiring_smoke() -> None:
     output = capture_output(run_test)
     assert "UI Wiring Sniff Test" in output
-    assert "Prediction component is Capacitor: True" in output
-    assert "Prediction confidence is 82%: True" in output
+    assert "Source voltage pins are POS/NEG: True" in output
+    assert "Source current value type is A: True" in output
+    assert "Source signal value type is Hz: True" in output
+    assert "Prediction result passes through: True" in output
+    assert "Prediction confidence passes through: True" in output
+    assert "Prediction probabilities pass through: True" in output
 
 
 if __name__ == "__main__":
